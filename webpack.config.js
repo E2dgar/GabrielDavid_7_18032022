@@ -16,7 +16,7 @@ module.exports = {
   },
   plugins: [
 	  new MiniCssExtractPlugin({
-		  filename: "[name].css",
+		  filename: "style.css",
 	  }),
 		new PrettierPlugin({
 			printWidth: 80,               // Specify the length of line that the printer will wrap on.

@@ -1,0 +1,37 @@
+body {
+  font-family: "Lato", sans-serif;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+  }
+
+html {
+  scroll-behavior: smooth;
+}
+
+main {
+  margin: 0 100px;    
+}
+
+/*Colors************************/
+  $primary: #D04F4F;
+  $blue: #3282F7;
+  $green: #68D9A4;
+  $red: #ED6454;
+
+
+/*Fonts************************/
+  /*$f96: 6rem;*/
+  $f64: 4rem;
+  /*$f48: 3rem;*/
+  /*$f40: 2.5rem;*/
+  $f36: 2.25rem;
+  $f24: 1.5rem;
+  $f20: 1.25rem;
+  $f18: 1.125rem;
+ /* $f14: .875rem;*/
+  $f13: 0.82rem;
+  $f10: 0.625rem;
+  $f9:  0.563rem;
