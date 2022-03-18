@@ -1,0 +1,31 @@
+.search {
+
+  form {
+    width: 100%;
+    padding: 8px;
+    background-color: $light-grey;
+    display: flex;
+    border-radius: 5px;
+
+    input[type='search']{
+      height: 53px;
+      border: none;
+      background: none;
+      color: $black;
+      width: 100%;
+      padding-left: 1rem;
+      font-size: $f18;
+
+      &::placeholder {
+        opacity: .35;
+      }
+    }
+
+    input[type='submit']{
+      border: none;
+      background: url('/assets/img/search.png') no-repeat center center;
+      width: 48px;
+      cursor: pointer;
+    }
+  }
+}
