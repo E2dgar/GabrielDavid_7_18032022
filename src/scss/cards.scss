@@ -1,0 +1,84 @@
+.recettes {
+  margin: 54px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 380px));
+  column-gap: 50px;
+  row-gap: 50px;
+
+  article {
+    
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: $light-grey;
+
+    .img-container {
+      background-color: $grey;
+      height: 178px;
+    }
+
+    h2 {
+      font-weight: 400;
+      font-size: $f18;
+      height: 50px;
+      display: flex;
+      justify-content: space-between;
+      margin: 20px;
+
+      span {
+        font-weight: bold;
+        padding-left: 34px;
+        background: url('/assets/img/timer.png') 7px 0 no-repeat;
+      }
+    }
+
+    .details {
+      display: flex;
+      padding: 0 18px 20px 20px;
+      position: relative;
+
+      .ingredients-wrapper {
+        width: 50%;
+        padding-right: .5rem;
+
+        .ingredient {
+          font-size: $f12;
+          font-weight: bold;
+          margin: 0;
+          line-height: 1.1;
+
+          span {
+            font-weight: 400;
+          }
+        }
+      }
+
+      .description {
+        width: 50%;
+        line-height: 1.1;
+        font-size: $f12;
+        font-weight: 400;
+        text-overflow: ellipsis;
+        white-space: normal;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 7;
+        -webkit-box-orient: vertical;
+        max-height: 94px;
+
+       /* &::after {
+          content: '';
+          background-color: $light-grey;
+          height: 20px;
+          width: 50%;
+          bottom: 11px;
+          right: 0;
+          position: absolute;
+        }*/
+      }
+
+
+    }
+
+  }
+  
+}
