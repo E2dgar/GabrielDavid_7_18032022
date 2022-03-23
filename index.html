@@ -21,22 +21,34 @@
       </form>
 
       <div class="tags">
-        <div class="combo-box combo-blue combo-ingredients" tabindex="0" data-list="ingredients">
+        <div class="combo-box combo-blue combo-ingredients" data-list="ingredients">
           <button id="ingredients-button" class="ingredients-button list-button" aria-haspopup="ingredients-list">Ingredients</button>
-          <input class="hidden list-input" type="text" name="ingredients" placeholder="Rechercher un ingredient" aria-label="Rechercher des ingrédients par mot-clé">
-          <ul class="combo-list ingredients-list hidden" role="listbox" aria-labelledby="ingredients-button"></ul>
+
+          <div class="list-wrapper ingredients-list-wrapper hidden">
+            <button class="close"></button>
+            <input class="list-input" type="text" name="ingredients" placeholder="Rechercher un ingredient" aria-label="Rechercher des ingrédients par mot-clé">
+            <ul class="combo-list ingredients-list" role="listbox" aria-labelledby="ingredients-button"></ul>
+          </div>
         </div>
 
-        <div class="combo-box combo-green combo-appareils" tabindex="0" data-list="appareils">
+        <div class="combo-box combo-green combo-appareils" data-list="appareils">
           <button id="appareils-button" class="appareils-button list-button" aria-haspopup="appareils-list">Appareils</button>
-          <input class="hidden list-input" type="text" name="appareils" placeholder="Rechercher un appareil" aria-label="Rechercher des appareils par mot-clé">
-          <ul class="combo-list appareils-list hidden" role="listbox" aria-labelledby="appareils-button" tabindex="0"></ul>
+          
+          <div class="list-wrapper appareils-list-wrapper hidden">
+            <button class="close"></button>
+            <input class="list-input" type="text" name="appareils" placeholder="Rechercher un appareil" aria-label="Rechercher des appareils par mot-clé">
+            <ul class="combo-list appareils-list" role="listbox" aria-labelledby="appareils-button" tabindex="0"></ul>
+          </div>
         </div>
 
-        <div class="combo-box combo-red combo-ustensiles" tabindex="0" data-list="ustensiles">
+        <div class="combo-box combo-red combo-ustensiles" data-list="ustensiles">
           <button id="ustensiles-button" class="ustensiles-button list-button" aria-haspopup="ustensiles-list">Ustensiles</button>
-          <input class="hidden list-input" type="text" name="ustensiles" placeholder="Rechercher un ustensile" aria-label="Rechercher des ustensiles par mot-clé">
-          <ul class="combo-list ustensiles-list hidden" role="listbox" aria-labelledby="ustensiles-button" tabindex="0"></ul>
+          
+          <div class="list-wrapper ustensiles-list-wrapper hidden">
+            <button class="close"></button>
+            <input class="list-input" type="text" name="ustensiles" placeholder="Rechercher un ustensile" aria-label="Rechercher des ustensiles par mot-clé">
+            <ul class="combo-list ustensiles-list" role="listbox" aria-labelledby="ustensiles-button" tabindex="0"></ul>
+          </div>
         </div>
       </div>
 

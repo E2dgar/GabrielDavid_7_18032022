@@ -41,27 +41,7 @@
       }
     }
 
-    ul {
-      border-radius: 5px;
-      display: grid;
-      grid-template-columns: repeat(3, 200px);
-      column-gap: 2rem;
-      list-style: none;
-      padding: 1rem 1.2rem;
-      margin: -1rem 0 0;
-
-      li {
-        margin: 5px 0;
-        font-size: $f18;
-        color: $white;
-        cursor: pointer;
-
-        &::first-letter{
-          text-transform: uppercase;
-        }
-      }
-    }
-
+    
     button {
       border: none;
       border-radius: 5px;
@@ -80,24 +60,58 @@
         width: 16px;
         height: 11px;
         background: url('/assets/img/downArrow.png');
-        transition: transform .3 ease-in-out;
       }
     }
 
-    input {
-      border: none;
-      color: $white;
-      font-size: $f18;
-      position: absolute;
-      top: 23px;
-      left: 15px;
+    .list-wrapper {
+      position: relative;
+      top: -30px;
 
-      &::placeholder {
+      ul {
+        border-radius: 5px;
+        display: grid;
+        grid-template-columns: repeat(3, 200px);
+        column-gap: 2rem;
+        list-style: none;
+        padding: 1rem 1.2rem;
+        margin: 1rem 0 0;
+  
+        li {
+          margin: 5px 0;
+          font-size: $f18;
+          color: $white;
+          cursor: pointer;
+  
+          &::first-letter{
+            text-transform: uppercase;
+          }
+        }
+      }
+      input {
+        border: none;
         color: $white;
-        opacity: .5
+        font-size: $f18;
+        position: absolute;
+        top: -32px;
+        left: 15px;
+  
+        &::placeholder {
+          color: $white;
+          opacity: .5
+        }
+      }
+
+      .close {
+        border: none;
+        background: none;
+        position: absolute;
+        top: -30px;
+        right: -48px;
+        width: 48px;
+        height: 48px;
+        background: url('/assets/img/upArrow.png') no-repeat;
       }
     }
-
     .hidden {
       display: none;
     }

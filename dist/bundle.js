@@ -1552,7 +1552,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const select = options => {
-  const buttons = document.querySelectorAll("button");
+  const buttons = document.querySelectorAll(".list-button");
+  const closeButtons = document.querySelectorAll(".close");
   /*const options = document.querySelectorAll('[role=option]')*/
 
   /**
@@ -1607,22 +1608,22 @@ const select = options => {
    * Show the list of options
    */
 
-  const showList = (wrapper, button, list) => {
+  const showList = (mainWrapper, listWrapper, button, list) => {
     if (document.querySelector(".show")) {
       hiddenListActions();
     }
 
-    wrapper.classList.add("show");
-    list.classList.remove("hidden");
-    button.nextElementSibling.classList.remove("hidden");
+    mainWrapper.classList.add("show");
+    listWrapper.classList.remove("hidden");
     button.setAttribute("aria-expanded", true);
   };
 
   buttons.forEach(button => {
-    const wrapper = document.querySelector(`.combo-${button.getAttribute("aria-haspopup").replace("-list", "")}`);
+    const mainWrapper = document.querySelector(`.combo-${button.getAttribute("aria-haspopup").replace("-list", "")}`);
+    const listWrapper = document.querySelector(`.${button.getAttribute("aria-haspopup")}-wrapper`);
     const list = document.querySelector(`.${button.getAttribute("aria-haspopup")}`);
     button.addEventListener("click", () => {
-      showList(wrapper, button, list);
+      showList(mainWrapper, listWrapper, button, list);
     });
   });
   /**
@@ -1631,13 +1632,13 @@ const select = options => {
 
   const hiddenListActions = () => {
     document.querySelector(".show .combo-list").classList.add("hidden");
-    document.querySelector(".show input").classList.add("hidden");
-    document.querySelector(".show button").removeAttribute("aria-expanded");
+    document.querySelector(".show .list-wrapper").classList.add("hidden");
+    document.querySelector(".show .list-button").removeAttribute("aria-expanded");
     document.querySelector(".show").classList.remove("show");
   };
 
   const hideList = e => {
-    if (!document.querySelector(".show") || e.target.closest("div")?.classList.contains("combo-box")) {
+    if (!document.querySelector(".show") || e.target.closest("div")?.classList.contains("combo-box") || e.target.closest("div")?.classList.contains("list-wrapper")) {
       return;
     }
 
@@ -1645,6 +1646,7 @@ const select = options => {
   };
 
   document.addEventListener("click", e => hideList(e));
+  closeButtons.forEach(button => button.addEventListener("click", hiddenListActions));
   /* Focus item and select on mouse click    */
 
   /*const clickItem = e => {
