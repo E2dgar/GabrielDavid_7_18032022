@@ -1,0 +1,105 @@
+.tags {
+  margin-top: 25px;
+  display: flex;
+  position: absolute;
+  z-index: 100;
+
+  .combo-box {
+    width: max-content;
+    border-radius: 5px;
+    position: relative;
+    
+    margin-right: 20px;
+
+    &.combo-blue {
+
+      button,
+      input {
+        background: $blue;
+      }
+      &.show {
+        background: $blue;
+      }
+    }
+    &.combo-green {
+      button,
+      input {
+        background: $green;
+      }
+      &.show {
+        background: $green;
+      }
+    }
+    &.combo-red {
+
+      button,
+      input {
+        background: $red;
+      }
+      &.show {
+        background: $red;
+      }
+    }
+
+    ul {
+      border-radius: 5px;
+      display: grid;
+      grid-template-columns: repeat(3, 200px);
+      column-gap: 2rem;
+      list-style: none;
+      padding: 1rem 1.2rem;
+      margin: -1rem 0 0;
+
+      li {
+        margin: 5px 0;
+        font-size: $f18;
+        color: $white;
+        cursor: pointer;
+
+        &::first-letter{
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    button {
+      border: none;
+      border-radius: 5px;
+      color: $white;
+      padding: 23px 64px 24px 15px;
+      font-size: $f18;
+      font-weight: bold;
+      position: relative;
+      cursor: pointer;
+
+      &::after{
+        content: "";
+        position: absolute;
+        top: calc(50% - 5px);
+        right: 15px;
+        width: 16px;
+        height: 11px;
+        background: url('/assets/img/downArrow.png');
+        transition: transform .3 ease-in-out;
+      }
+    }
+
+    input {
+      border: none;
+      color: $white;
+      font-size: $f18;
+      position: absolute;
+      top: 23px;
+      left: 15px;
+
+      &::placeholder {
+        color: $white;
+        opacity: .5
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+  }
+}

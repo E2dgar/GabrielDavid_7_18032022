@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="dist/style.css">
   <title>Les petis plats</title>
 </head>
-<body>
+<body tabindex="-1">
   <header>
     <img src="assets/img/logo.png" alt="Logo Les petits plats">
     <h1><a href="#">Les petits plats</a></h1>
@@ -15,12 +15,30 @@
   <main>
     <section class="search">
       <form role="search">
-        <input type="search" name="q" placeholder="Rechercher une recette" aria-label="Rechercher dans les site">
+        <input type="search" name="q" placeholder="Rechercher une recette" aria-label="Rechercher dans le site">
         <input type="submit" value="">
 
       </form>
 
-      <div class="tags"></div>
+      <div class="tags">
+        <div class="combo-box combo-blue combo-ingredients" tabindex="0" data-list="ingredients">
+          <button id="ingredients-button" class="ingredients-button list-button" aria-haspopup="ingredients-list">Ingredients</button>
+          <input class="hidden list-input" type="text" name="ingredients" placeholder="Rechercher un ingredient" aria-label="Rechercher des ingrédients par mot-clé">
+          <ul class="combo-list ingredients-list hidden" role="listbox" aria-labelledby="ingredients-button"></ul>
+        </div>
+
+        <div class="combo-box combo-green combo-appareils" tabindex="0" data-list="appareils">
+          <button id="appareils-button" class="appareils-button list-button" aria-haspopup="appareils-list">Appareils</button>
+          <input class="hidden list-input" type="text" name="appareils" placeholder="Rechercher un appareil" aria-label="Rechercher des appareils par mot-clé">
+          <ul class="combo-list appareils-list hidden" role="listbox" aria-labelledby="appareils-button" tabindex="0"></ul>
+        </div>
+
+        <div class="combo-box combo-red combo-ustensiles" tabindex="0" data-list="ustensiles">
+          <button id="ustensiles-button" class="ustensiles-button list-button" aria-haspopup="ustensiles-list">Ustensiles</button>
+          <input class="hidden list-input" type="text" name="ustensiles" placeholder="Rechercher un ustensile" aria-label="Rechercher des ustensiles par mot-clé">
+          <ul class="combo-list ustensiles-list hidden" role="listbox" aria-labelledby="ustensiles-button" tabindex="0"></ul>
+        </div>
+      </div>
 
       <div class="fields">
         <div class="ingredients"></div>

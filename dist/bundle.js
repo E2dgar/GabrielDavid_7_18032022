@@ -283,7 +283,7 @@ const recipes = [{
   time: 50,
   description: "Etaler la pate dans les moules à tartelette. Faire cuire la pate 30 minutes. Découper le chocolat en morceau et le faire chauffer, y ajouter la crême liquide, ajouter le beurre et remuer jusqu'à avoir une pâte homogène. Verser la pate sur les tartelettes. Couper les fraises en 2 et les positionner sur ",
   appliance: "Four",
-  ustensils: ["moule à tartelettes (6)", "casserolle"]
+  ustensils: ["moule à tartelettes (6)", "casserole"]
 }, {
   id: 8,
   name: "Brownie",
@@ -315,7 +315,7 @@ const recipes = [{
   time: 60,
   description: "Hachez les noix grossièrement. Faire fondre le chocolat avec le beurre. Mélanger les oeuf et le sucre et mélanger au chocolat. Ajouter la farine. Mélanger afin d'avoir quelque chose d'homogène puis incorporer les noix. Verser la préparation dans un moule de préférence rectangulaire. Cuire 2O à 25 minutes à 180°. Sortez du four et attendez quelques minutes pour démouler. Servir avec une boule de glace pour plus de gourmandise.",
   appliance: "Four",
-  ustensils: ["moule à gateaux", "casserolle"]
+  ustensils: ["moule à gateaux", "casserole"]
 }, {
   id: 9,
   name: "Salade Méditerannéene fraiche au chèvre",
@@ -420,7 +420,7 @@ const recipes = [{
     unit: "tasses"
   }],
   time: 40,
-  description: "Éplucher les fruits et les couper en morceaux, les mettre dans une casserolle en ajoutant l'eau et le sucre vanillé. Laisser cuire 15 minutes en remuant régulièrement.",
+  description: "Éplucher les fruits et les couper en morceaux, les mettre dans une casserole en ajoutant l'eau et le sucre vanillé. Laisser cuire 15 minutes en remuant régulièrement.",
   appliance: "Casserole",
   ustensils: ["couteau", "économe"]
 }, {
@@ -671,7 +671,7 @@ const recipes = [{
   }],
   time: 30,
   description: "Cuisiner la viande hachée dans une poelle à frire. Dans une autre faire cuire les oignons découpés en fins dés avec un peu de beurre. Ajouter du vin rouge. Mélanger les oigons avec la viande hachée. Faire cuire les pates le temps indiqué sur le paquet. Ajouter le coulis de tomates à la viande hachée. Une fois que les pates sont cuites, ajouter la crème fraiche à la viande hachée. Serivir.",
-  appliance: "Casserolle.",
+  appliance: "Casserole.",
   ustensils: ["Cuillère en bois", "louche", "couteau"]
 }, {
   id: 22,
@@ -700,7 +700,7 @@ const recipes = [{
   time: 30,
   description: "Faire fondre le chocolat et le beurre au bain marie. Dans un saladier battre les oeufs avec le sucre jusqu'à obtenir une texture de type mousse. Ajouter la farine ainsi que le mélange de beurre et chocolat fondu. Beurrez le moule à gateaux. Mettre au four préchauffé à 200° puis faites chauffer pendant 15 minutes. C'est prêt. Servir avec une boule de glace ou une crême dessert.",
   appliance: "Four",
-  ustensils: ["moule à gateaux", "fouet", "casserolle"]
+  ustensils: ["moule à gateaux", "fouet", "casserole"]
 }, {
   id: 23,
   name: "Quiche lorraine",
@@ -841,7 +841,7 @@ const recipes = [{
   }],
   time: 15,
   description: "Faire fondre l'oseille avec du beurre demi sel, ajouter un litre d'eau. Ajouter les vermicelles. Laisser cuire. une foit prêt, sortir du feu et après 5 minutes ajouter le jaune d'oeuf et la crême fraîche",
-  appliance: "Casserolle",
+  appliance: "Casserole",
   ustensils: ["couteau", "cuillère en bois"]
 }, {
   id: 28,
@@ -870,7 +870,7 @@ const recipes = [{
   time: 80,
   description: "Emincer les blanc de poireaux et les faire chauffer dans 25 grammes de beurre. AJouter les pommes de terres coupées en morceaux. Ajouter l'eau et laisser mijoter pour 45 minutes. Chauffer l'oseille avec le beurre restant puis incorporer le tout. Mixez. Ajoutez la crème. Bon appetit.",
   appliance: "Mixer",
-  ustensils: ["casserolle", "couteau"]
+  ustensils: ["casserole", "couteau"]
 }, {
   id: 29,
   name: "Houmous Express",
@@ -914,7 +914,7 @@ const recipes = [{
   time: 60,
   description: "Mettre tous les ingrédients dans une cocotte. ajouter de l'eau pour recouvrir l'ensemble et laisser cuirre à petit feur pour 1 heure. Passer au mixer. Salez, poivrez. C'est prêt",
   appliance: "Mixer",
-  ustensils: ["casserolle", "cuillère en bois"]
+  ustensils: ["casserole", "cuillère en bois"]
 }, {
   id: 31,
   name: "Jardinière de légumes",
@@ -1022,7 +1022,7 @@ const recipes = [{
     quantity: 1
   }],
   time: 25,
-  description: "Eplucher les patates douces et coupez les en morceaux. Les faire cuire durant 20 minute dans une casserolle d'eau bouillante. Passer au mixer en ajoutant la crème et l'huile d'olive à son gout. Salez, poivrez. Pressez l'orange et ajouter le jus à l'ensemble. Servir.",
+  description: "Eplucher les patates douces et coupez les en morceaux. Les faire cuire durant 20 minute dans une casserole d'eau bouillante. Passer au mixer en ajoutant la crème et l'huile d'olive à son gout. Salez, poivrez. Pressez l'orange et ajouter le jus à l'ensemble. Servir.",
   appliance: "Mixer",
   ustensils: ["couteau", "économe", "cuillère en bois"]
 }, {
@@ -1208,7 +1208,7 @@ const recipes = [{
   }],
   time: 20,
   description: "Séparer les blancs d'oeufs. Faire fondre le chocolat au bain marie. Ajouter les jaunes et le sucre au chocolat hors du feu. Battre les blancs en neige. Ajouter les blancs au mélange de chocolat. Mélangez délicatement avec une spatule. Servir dans un plat ou dans des verres. Mettre au frais",
-  appliance: "Casserolle",
+  appliance: "Casserole",
   ustensils: ["fouet", "spatule", "verres"]
 }, {
   id: 42,
@@ -1286,7 +1286,7 @@ const recipes = [{
   }],
   time: 15,
   description: "Mélanger la farine et le beurre fondu en ajoutant le lait peu à peu. Ajouter du sucre après la cuisson. Bien mélanger. Ajouter le chocolat en morceaux et laisser chauffer 8 minutes en mélangeant avec une cuillère en bois. Mettre dans des verres",
-  appliance: "Casserolle",
+  appliance: "Casserole",
   ustensils: ["cuillère en bois"]
 }, {
   id: 45,
@@ -1310,7 +1310,7 @@ const recipes = [{
   }],
   time: 30,
   description: "Faire bouillir le lait ( on peut y ajouter de l'essence de vanille. Battre les oeufs et le sucre, ajouter la farine puis finalement ajouter le lait chaud. Remettre à feu doux pour faire épaissir en remuant pendant 5 à 10 minutes.",
-  appliance: "Casserolle",
+  appliance: "Casserole",
   ustensils: ["fouet", "saladier"]
 }, {
   id: 46,
@@ -1462,6 +1462,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+
+
 class Recipe {
   constructor(data) {
     this.id = data.id;
@@ -1469,10 +1472,239 @@ class Recipe {
     this.time = data.time;
     this.ingredients = data.ingredients;
   }
+  /**
+   * Get all recipes
+   * @returns {Object}
+   */
+
+
+  getAllRecipes() {
+    return _data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"];
+  }
 
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Recipe);
+
+/***/ }),
+/* 5 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const selectUI = options => {
+  options.forEach(option => {
+    let targetedList = document.querySelector(`.${option.name}-list`);
+    option.list.forEach(element => {
+      let optionLi = document.createElement("li");
+      optionLi.setAttribute("id", element);
+      optionLi.setAttribute("role", "option");
+      optionLi.setAttribute("tabindex", 0);
+      optionLi.textContent = element;
+      targetedList.append(optionLi);
+    });
+  });
+  /*const listboxArea = document.createElement("div");
+  listboxArea.className = `listbox-area ${options.style}-style`;
+   const label = document.createElement("span");
+  label.className = "label";
+  label.setAttribute("id", options.name);
+   const optionsWrapper = document.createElement("div");
+  optionsWrapper.setAttribute("id", `options-wrapper-${options.name}`);
+   const selectedOpt = document.createElement("button");
+  selectedOpt.className = "select-button";
+  selectedOpt.setAttribute("id", `selected-opt-${options.name}`);
+  selectedOpt.setAttribute("aria-haspopup", "listbox");
+  selectedOpt.setAttribute(
+    "aria-labelledby",
+    `${options.name} selected-opt-${options.name}`
+  );
+  selectedOpt.textContent = options.name;
+   const list = document.createElement("ul");
+  list.className = "hidden";
+  list.setAttribute("id", `options-list-${options.name}`);
+  list.setAttribute("role", "listbox");
+  list.setAttribute("aria-labelledby", options.name);
+  list.setAttribute("tabindex", 0);
+   options.list.forEach((option) => {
+    let optionLi = document.createElement("li");
+    optionLi.setAttribute("id", option);
+    optionLi.setAttribute("role", "option");
+    optionLi.setAttribute("tabindex", 0);
+    optionLi.textContent = option;
+     list.append(optionLi);
+  });
+   optionsWrapper.append(selectedOpt, list);
+  listboxArea.append(label, optionsWrapper);
+   document.querySelector(".fields").append(listboxArea);*/
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (selectUI);
+
+/***/ }),
+/* 6 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const select = options => {
+  const buttons = document.querySelectorAll("button");
+  /*const options = document.querySelectorAll('[role=option]')*/
+
+  /**
+   * Set focus on an item. Class focus on item & aria-activedescendant on listbox
+   * @param {object} item
+   */
+
+  /*const focusItem = (item) => {
+    let focusedItem = document.querySelector('.focused')
+    if(focusedItem){
+      focusedItem.classList.remove('focused')
+    }
+     item.classList.add('focused')
+    listbox.setAttribute('aria-activedescendant', item.id)
+  }*/
+
+  /**
+   * Select a item and hide listbox
+   */
+
+  /* const selectItem = () => {
+    let focusedItem = document.querySelector('.focused')
+    button.textContent = focusedItem.textContent
+    hideList()
+  }*/
+
+  /**
+   * Add listener on keyboard
+   */
+
+  /* const keyEventsListener = () => {
+    listbox.addEventListener('keydown', keyEvents)
+  }*/
+
+  /* Add listener on focus list to trigger listener on keyboad */
+
+  /*listbox.addEventListener('focus', keyEventsListener)*/
+
+  /**
+   * Execute functions depending on keys pressed
+   * @param event
+   */
+
+  /*const keyEvents = e => {
+    e.preventDefault()
+     if(e.code === 'Enter' || e.code === 'Space'){
+      selectItem()
+    }
+  }*/
+
+  /**
+   * Show the list of options
+   */
+
+  const showList = (wrapper, button, list) => {
+    if (document.querySelector(".show")) {
+      hiddenListActions();
+    }
+
+    wrapper.classList.add("show");
+    list.classList.remove("hidden");
+    button.nextElementSibling.classList.remove("hidden");
+    button.setAttribute("aria-expanded", true);
+  };
+
+  buttons.forEach(button => {
+    const wrapper = document.querySelector(`.combo-${button.getAttribute("aria-haspopup").replace("-list", "")}`);
+    const list = document.querySelector(`.${button.getAttribute("aria-haspopup")}`);
+    button.addEventListener("click", () => {
+      showList(wrapper, button, list);
+    });
+  });
+  /**
+   * Hide the list of options and trigger medias sort
+   */
+
+  const hiddenListActions = () => {
+    document.querySelector(".show .combo-list").classList.add("hidden");
+    document.querySelector(".show input").classList.add("hidden");
+    document.querySelector(".show button").removeAttribute("aria-expanded");
+    document.querySelector(".show").classList.remove("show");
+  };
+
+  const hideList = e => {
+    if (!document.querySelector(".show") || e.target.closest("div")?.classList.contains("combo-box")) {
+      return;
+    }
+
+    hiddenListActions();
+  };
+
+  document.addEventListener("click", e => hideList(e));
+  /* Focus item and select on mouse click    */
+
+  /*const clickItem = e => {
+    focusItem(e)
+    selectItem()
+  }*/
+
+  /*Add listeners on options */
+
+  /* options.forEach(option =>  option.addEventListener("click", e => clickItem(e.target)))
+  options.forEach(option =>  option.addEventListener("keydown", e => {
+   if(e.code === 'Enter'){
+      clickItem(option)
+   }
+  }))*/
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (select);
+
+/***/ }),
+/* 7 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "appliance": () => (/* binding */ appliance),
+/* harmony export */   "ingredients": () => (/* binding */ ingredients),
+/* harmony export */   "ustensils": () => (/* binding */ ustensils)
+/* harmony export */ });
+/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+
+const ingredients = [];
+_data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"].forEach(recipe => {
+  recipe.ingredients.forEach(ingredient => {
+    let cleanIngredient = ingredient.ingredient.toLowerCase();
+
+    if (!ingredients.includes(cleanIngredient)) {
+      ingredients.push(cleanIngredient);
+    }
+  });
+});
+const ustensils = [];
+_data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"].forEach(recipe => {
+  recipe.ustensils.forEach(ustensil => {
+    let cleanUstensil = ustensil.toLowerCase().replace(/\s\([0-99]\)/, "");
+
+    if (!ustensils.includes(cleanUstensil)) {
+      ustensils.push(cleanUstensil);
+    }
+  });
+});
+const appliance = [];
+_data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"].forEach(recipe => {
+  let cleanAppliance = recipe.appliance.toLowerCase().replace(".", "");
+
+  if (!appliance.includes(cleanAppliance)) {
+    appliance.push(cleanAppliance);
+  }
+});
+
 
 /***/ })
 /******/ 	]);
@@ -1537,8 +1769,29 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_main_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var _components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var _components_filterSelect_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
+/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3);
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7);
 
 
+
+
+
+
+(0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
+  name: "ingredients",
+  list: _http__WEBPACK_IMPORTED_MODULE_5__.ingredients
+}, {
+  name: "appareils",
+  list: _http__WEBPACK_IMPORTED_MODULE_5__.appliance
+}, {
+  name: "ustensiles",
+  list: _http__WEBPACK_IMPORTED_MODULE_5__.ustensils
+}]);
+(0,_components_filterSelect_select__WEBPACK_IMPORTED_MODULE_3__["default"])();
+console.log(_http__WEBPACK_IMPORTED_MODULE_5__.appliance);
+console.log("recipes", _data_recipes__WEBPACK_IMPORTED_MODULE_4__["default"]);
 (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_1__["default"])();
 })();
 
