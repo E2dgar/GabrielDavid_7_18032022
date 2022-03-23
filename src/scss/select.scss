@@ -92,12 +92,17 @@
         color: $white;
         font-size: $f18;
         position: absolute;
-        top: -32px;
+        top: -3rem;
         left: 15px;
+        padding: 1rem 1rem 1rem 8px;
+        width: 80%;
   
         &::placeholder {
           color: $white;
           opacity: .5
+        }
+        &:focus {
+          outline-color: $white;
         }
       }
 
