@@ -1674,6 +1674,39 @@ _data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"].forEach(recipe => {
 });
 
 
+/***/ }),
+/* 7 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+
+
+const search = () => {
+  const input = document.querySelector("[name='q']");
+
+  const recipeSearch = string => {
+    const titleResults = _data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"].filter(recipe => recipe.name.toLowerCase().includes(string));
+    console.log(titleResults);
+  };
+
+  const length = e => {
+    const string = e.target.value.toLowerCase();
+    const searchLength = string.length;
+
+    if (searchLength > 2) {
+      recipeSearch(string);
+    }
+  };
+
+  input.addEventListener("input", e => length(e));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -1741,6 +1774,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_filterSelect_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5);
 /* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3);
 /* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7);
+
 
 
 
@@ -1761,6 +1796,7 @@ __webpack_require__.r(__webpack_exports__);
 console.log(_http__WEBPACK_IMPORTED_MODULE_5__.appliance);
 console.log("recipes", _data_recipes__WEBPACK_IMPORTED_MODULE_4__["default"]);
 (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_1__["default"])();
+(0,_search__WEBPACK_IMPORTED_MODULE_6__["default"])();
 })();
 
 /******/ })()

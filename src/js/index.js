@@ -4,6 +4,7 @@ import selectUI from "./components/filterSelect/selectUI";
 import select from "./components/filterSelect/select";
 import recipes from "./data/recipes";
 import { ingredients, ustensils, appliance } from "./http";
+import search from "./search";
 
 selectUI([
   {
@@ -26,3 +27,4 @@ console.log(appliance);
 console.log("recipes", recipes);
 
 recipesUI();
+search();
