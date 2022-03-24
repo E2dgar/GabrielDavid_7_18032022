@@ -1,5 +1,4 @@
 import recipes from "../data/recipes";
-import Recipe from "../Models/Recipe";
 
 const recipesUI = () => {
   const createCard = (recipe) => {
