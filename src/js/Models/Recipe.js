@@ -1,6 +1,3 @@
-import recipes from "../data/recipes";
-import { replace, pushInArray } from "../services";
-
 class Recipe {
   constructor(data) {
     this.id = data.id;
