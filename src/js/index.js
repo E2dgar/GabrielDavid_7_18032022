@@ -5,6 +5,7 @@ import select from "./components/filterSelect/select";
 import recipes from "./data/recipes";
 import { ingredients, ustensils, appliance } from "./http";
 import search from "./search";
+import Recipe from "./Models/Recipe";
 
 selectUI([
   {
@@ -22,9 +23,6 @@ selectUI([
 ]);
 
 select();
-
-console.log(appliance);
-console.log("recipes", recipes);
 
 recipesUI();
 search();

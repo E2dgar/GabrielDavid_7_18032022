@@ -1,20 +1,48 @@
 import recipes from "../data/recipes";
+import { replace, pushInArray } from "../services";
 
 class Recipe {
   constructor(data) {
     this.id = data.id;
-    this.title = data.title;
+    this.name = data.name;
     this.time = data.time;
     this.ingredients = data.ingredients;
+    this.appliance = data.appliance;
+    this.ustensils = data.ustensils;
+    this.description = data.description;
   }
 
   /**
-   * Get all recipes
-   * @returns {Object}
+   * Get ingredient & quantity from a recipe
+   * @returns {Array}
    */
-  getAllRecipes() {
-    return recipes;
+  getIngredientsAndQuantity() {
+    return this.ingredients;
   }
+
+  /**
+   * Get ingredients list from a recipe
+   * @returns {Array}
+   */
+  getIngredients() {
+    const ingredients = [];
+    this.ingredients.forEach((ingredient) =>
+      ingredients.push(ingredient.ingredient.toLowerCase())
+    );
+
+    return ingredients;
+  }
+
+  getId() {
+    return this.id;
+  }
+  /*getAllIngredients() {
+    const getAllIngredients = [];
+    this.getAllRecipes().forEach((recipe) =>
+      pushInArray(getAllIngredients, recipe)
+    );
+    return getAllIngredients;
+  }*/
 }
 
 export default Recipe;

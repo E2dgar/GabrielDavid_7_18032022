@@ -1,6 +1,25 @@
-import recipes from "../data/recipes";
+import { allRecipes } from "../http";
 
-const recipesUI = () => {
+const recipesUI = (searchedRecipes) => {
+  const data = searchedRecipes ?? allRecipes;
+  const noResultsElement = document.querySelector(".no-results");
+
+  if (data.length === 0) {
+    if (noResultsElement) {
+      return;
+    } else {
+      const noResults = document.createElement("p");
+      noResults.className = "no-results";
+      noResults.textContent = "Aucune recette pour cette recherche";
+      document.querySelector(".recettes").append(noResults);
+      return;
+    }
+  }
+
+  if (noResultsElement) {
+    noResultsElement.remove();
+  }
+
   const createCard = (recipe) => {
     const article = document.createElement("article");
 
@@ -55,7 +74,7 @@ const recipesUI = () => {
     return DOMElement;
   };
 
-  recipes.forEach((recipe) => createCard(recipe));
+  data.forEach((recipe) => createCard(recipe));
 };
 
 export default recipesUI;

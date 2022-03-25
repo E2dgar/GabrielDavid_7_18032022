@@ -1,34 +1,29 @@
 import recipes from "./data/recipes";
+import Recipe from "./Models/Recipe";
+import { pushInArray } from "./services";
+
+const allRecipes = [];
+recipes.forEach((recipe) => allRecipes.push(new Recipe(recipe)));
 
 const ingredients = [];
-
-recipes.forEach((recipe) => {
+allRecipes.forEach((recipe) => {
   recipe.ingredients.forEach((ingredient) => {
-    let cleanIngredient = ingredient.ingredient.toLowerCase();
-    if (!ingredients.includes(cleanIngredient)) {
-      ingredients.push(cleanIngredient);
-    }
+    pushInArray(ingredients, ingredient.ingredient.toLowerCase());
   });
 });
 
 const ustensils = [];
-
-recipes.forEach((recipe) => {
+allRecipes.forEach((recipe) => {
   recipe.ustensils.forEach((ustensil) => {
     let cleanUstensil = ustensil.toLowerCase().replace(/\s\([0-99]\)/, "");
-    if (!ustensils.includes(cleanUstensil)) {
-      ustensils.push(cleanUstensil);
-    }
+    pushInArray(ustensils, cleanUstensil);
   });
 });
 
 const appliance = [];
-
-recipes.forEach((recipe) => {
+allRecipes.forEach((recipe) => {
   let cleanAppliance = recipe.appliance.toLowerCase().replace(".", "");
-  if (!appliance.includes(cleanAppliance)) {
-    appliance.push(cleanAppliance);
-  }
+  pushInArray(appliance, cleanAppliance);
 });
 
-export { ingredients, ustensils, appliance };
+export { allRecipes, ingredients, ustensils, appliance };
