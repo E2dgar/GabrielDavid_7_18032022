@@ -1518,11 +1518,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
-/* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
-
-
-
 class Recipe {
   constructor(data) {
     this.id = data.id;
@@ -1893,12 +1888,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _components_filterSelect_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4);
-/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3);
-/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9);
-/* harmony import */ var _Models_Recipe__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5);
-
-
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3);
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9);
 
 
 
@@ -1907,17 +1898,17 @@ __webpack_require__.r(__webpack_exports__);
 
 (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
   name: "ingredients",
-  list: _http__WEBPACK_IMPORTED_MODULE_5__.ingredients
+  list: _http__WEBPACK_IMPORTED_MODULE_4__.ingredients
 }, {
   name: "appareils",
-  list: _http__WEBPACK_IMPORTED_MODULE_5__.appliance
+  list: _http__WEBPACK_IMPORTED_MODULE_4__.appliance
 }, {
   name: "ustensiles",
-  list: _http__WEBPACK_IMPORTED_MODULE_5__.ustensils
+  list: _http__WEBPACK_IMPORTED_MODULE_4__.ustensils
 }]);
 (0,_components_filterSelect_select__WEBPACK_IMPORTED_MODULE_3__["default"])();
 (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_1__["default"])();
-(0,_search__WEBPACK_IMPORTED_MODULE_6__["default"])();
+(0,_search__WEBPACK_IMPORTED_MODULE_5__["default"])();
 })();
 
 /******/ })()
