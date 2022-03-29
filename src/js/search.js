@@ -1,5 +1,11 @@
-import recipesUI from "./components/recipesUI";
-import { allRecipes } from "./http";
+import refreshUiRecipes from "./components/recipesUI";
+import {
+  allRecipes,
+  findIngredients,
+  findAppliances,
+  findUstensils,
+} from "./http";
+import selectUI from "./components/filterSelect/selectUI";
 
 const search = () => {
   const input = document.querySelector("[name='q']");
@@ -10,36 +16,53 @@ const search = () => {
 
   /**
    * Renvoie un tableau de recettes correspondantes à la recherche saisie
-   * @param {string} string
+   * @param {string} searchedText
    */
-  const recipeSearch = (string) => {
-    const results = allRecipes.filter(
-      (recipe) =>
-        recipe.name.toLowerCase().includes(string) ||
-        recipe.description.toLowerCase().includes(string) ||
-        recipe.ingredients.some((ingredient) =>
-          ingredient.ingredient.toLowerCase().includes(string)
-        )
+  const searchAndUpdateResult = (searchedText) => {
+    const results = allRecipes.filter((recipe) =>
+      recipe.containsText(searchedText)
     );
 
     /*Actualisation de l'interfacce */
-    recipesUI(results);
+    refreshUiRecipes(results);
 
-    /*Opérations sur les tags */
+    /*Actualisation des tags */
+    selectUI([
+      {
+        name: "ingredients",
+        list: findIngredients(results),
+      },
+      {
+        name: "appareils",
+        list: findAppliances(results),
+      },
+      {
+        name: "ustensiles",
+        list: findUstensils(results),
+      },
+    ]);
     /*TODO*/
   };
 
-  /*Déclenche la recherche à partir de 3 chars saisis */
-  const length = (e) => {
-    const string = e.target.value.toLowerCase();
-    const searchLength = string.length;
-    const cards = document.querySelectorAll(".recettes article");
-    if (searchLength > 2) {
-      removeDOMElements(cards);
-      recipeSearch(string);
+  /*Remove recipes from UI */
+  const cleanCurrentResult = () => {
+    removeDOMElements(document.querySelectorAll(".recettes article"));
+  };
+
+  /*La recherche ne se déclenche qu'à partir de 3 chars saisis */
+  const canSearch = (searchedText) => {
+    return searchedText.length > 2;
+  };
+
+  const onSearch = (e) => {
+    const searchedText = e.target.value.toLowerCase();
+    if (canSearch(searchedText)) {
+      cleanCurrentResult();
+      searchAndUpdateResult(searchedText);
     }
   };
-  input.addEventListener("input", (e) => length(e));
+
+  input.addEventListener("input", (e) => onSearch(e));
 };
 
 export default search;

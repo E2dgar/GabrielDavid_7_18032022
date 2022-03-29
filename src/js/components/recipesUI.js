@@ -1,6 +1,6 @@
 import { allRecipes } from "../http";
 
-const recipesUI = (searchedRecipes) => {
+const refreshUiRecipes = (searchedRecipes) => {
   const data = searchedRecipes ?? allRecipes;
   const noResultsElement = document.querySelector(".no-results");
 
@@ -77,4 +77,4 @@ const recipesUI = (searchedRecipes) => {
   data.forEach((recipe) => createCard(recipe));
 };
 
-export default recipesUI;
+export default refreshUiRecipes;

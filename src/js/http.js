@@ -5,25 +5,34 @@ import { pushInArray } from "./services";
 const allRecipes = [];
 recipes.forEach((recipe) => allRecipes.push(new Recipe(recipe)));
 
-const ingredients = [];
-allRecipes.forEach((recipe) => {
-  recipe.ingredients.forEach((ingredient) => {
-    pushInArray(ingredients, ingredient.ingredient.toLowerCase());
+const findIngredients = (recipes) => {
+  let ingredients = [];
+  recipes.forEach((recipe) => {
+    recipe.ingredients.forEach((ingredient) => {
+      pushInArray(ingredients, ingredient.ingredient.toLowerCase());
+    });
   });
-});
+  return ingredients;
+};
 
-const ustensils = [];
-allRecipes.forEach((recipe) => {
-  recipe.ustensils.forEach((ustensil) => {
-    let cleanUstensil = ustensil.toLowerCase().replace(/\s\([0-99]\)/, "");
-    pushInArray(ustensils, cleanUstensil);
+const findUstensils = (recipes) => {
+  let ustensils = [];
+  recipes.forEach((recipe) => {
+    recipe.ustensils.forEach((ustensil) => {
+      let cleanUstensil = ustensil.toLowerCase().replace(/\s\([0-99]\)/, "");
+      pushInArray(ustensils, cleanUstensil);
+    });
   });
-});
+  return ustensils;
+};
 
-const appliance = [];
-allRecipes.forEach((recipe) => {
-  let cleanAppliance = recipe.appliance.toLowerCase().replace(".", "");
-  pushInArray(appliance, cleanAppliance);
-});
+const findAppliances = (recipes) => {
+  let appliances = [];
+  recipes.forEach((recipe) => {
+    let cleanAppliance = recipe.appliance.toLowerCase().replace(".", "");
+    pushInArray(appliances, cleanAppliance);
+  });
+  return appliances;
+};
 
-export { allRecipes, ingredients, ustensils, appliance };
+export { allRecipes, findIngredients, findUstensils, findAppliances };

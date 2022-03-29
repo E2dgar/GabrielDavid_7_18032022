@@ -1,4 +1,9 @@
 const selectUI = (options) => {
+  const optionsLi = document.querySelectorAll("[role='option']");
+  if (optionsLi.length > 0) {
+    optionsLi.forEach((option) => option.remove());
+  }
+
   options.forEach((option) => {
     let targetedList = document.querySelector(`.${option.name}-list`);
 

@@ -20,7 +20,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 
 
-const recipesUI = searchedRecipes => {
+const refreshUiRecipes = searchedRecipes => {
   const data = searchedRecipes ?? _http__WEBPACK_IMPORTED_MODULE_0__.allRecipes;
   const noResultsElement = document.querySelector(".no-results");
 
@@ -87,7 +87,7 @@ const recipesUI = searchedRecipes => {
   data.forEach(recipe => createCard(recipe));
 };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (recipesUI);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (refreshUiRecipes);
 
 /***/ }),
 /* 3 */
@@ -96,9 +96,9 @@ const recipesUI = searchedRecipes => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "allRecipes": () => (/* binding */ allRecipes),
-/* harmony export */   "appliance": () => (/* binding */ appliance),
-/* harmony export */   "ingredients": () => (/* binding */ ingredients),
-/* harmony export */   "ustensils": () => (/* binding */ ustensils)
+/* harmony export */   "findAppliances": () => (/* binding */ findAppliances),
+/* harmony export */   "findIngredients": () => (/* binding */ findIngredients),
+/* harmony export */   "findUstensils": () => (/* binding */ findUstensils)
 /* harmony export */ });
 /* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var _Models_Recipe__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
@@ -108,24 +108,37 @@ __webpack_require__.r(__webpack_exports__);
 
 const allRecipes = [];
 _data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"].forEach(recipe => allRecipes.push(new _Models_Recipe__WEBPACK_IMPORTED_MODULE_1__["default"](recipe)));
-const ingredients = [];
-allRecipes.forEach(recipe => {
-  recipe.ingredients.forEach(ingredient => {
-    (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ingredients, ingredient.ingredient.toLowerCase());
+
+const findIngredients = recipes => {
+  let ingredients = [];
+  recipes.forEach(recipe => {
+    recipe.ingredients.forEach(ingredient => {
+      (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ingredients, ingredient.ingredient.toLowerCase());
+    });
   });
-});
-const ustensils = [];
-allRecipes.forEach(recipe => {
-  recipe.ustensils.forEach(ustensil => {
-    let cleanUstensil = ustensil.toLowerCase().replace(/\s\([0-99]\)/, "");
-    (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ustensils, cleanUstensil);
+  return ingredients;
+};
+
+const findUstensils = recipes => {
+  let ustensils = [];
+  recipes.forEach(recipe => {
+    recipe.ustensils.forEach(ustensil => {
+      let cleanUstensil = ustensil.toLowerCase().replace(/\s\([0-99]\)/, "");
+      (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ustensils, cleanUstensil);
+    });
   });
-});
-const appliance = [];
-allRecipes.forEach(recipe => {
-  let cleanAppliance = recipe.appliance.toLowerCase().replace(".", "");
-  (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(appliance, cleanAppliance);
-});
+  return ustensils;
+};
+
+const findAppliances = recipes => {
+  let appliances = [];
+  recipes.forEach(recipe => {
+    let cleanAppliance = recipe.appliance.toLowerCase().replace(".", "");
+    (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(appliances, cleanAppliance);
+  });
+  return appliances;
+};
+
 
 
 /***/ }),
@@ -1528,38 +1541,16 @@ class Recipe {
     this.ustensils = data.ustensils;
     this.description = data.description;
   }
-  /**
-   * Get ingredient & quantity from a recipe
-   * @returns {Array}
-   */
+  /*Retourne une chaine de caractères composée de name, description et ingrédient */
 
 
-  getIngredientsAndQuantity() {
-    return this.ingredients;
-  }
-  /**
-   * Get ingredients list from a recipe
-   * @returns {Array}
-   */
-
-
-  getIngredients() {
-    const ingredients = [];
-    this.ingredients.forEach(ingredient => ingredients.push(ingredient.ingredient.toLowerCase()));
-    return ingredients;
+  get searchLocation() {
+    return [this.name, this.description, ...this.ingredients.map(i => i.ingredient)].join().toLowerCase();
   }
 
-  getId() {
-    return this.id;
+  containsText(text) {
+    return this.searchLocation.includes(text);
   }
-  /*getAllIngredients() {
-    const getAllIngredients = [];
-    this.getAllRecipes().forEach((recipe) =>
-      pushInArray(getAllIngredients, recipe)
-    );
-    return getAllIngredients;
-  }*/
-
 
 }
 
@@ -1599,6 +1590,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const selectUI = options => {
+  const optionsLi = document.querySelectorAll("[role='option']");
+
+  if (optionsLi.length > 0) {
+    optionsLi.forEach(option => option.remove());
+  }
+
   options.forEach(option => {
     let targetedList = document.querySelector(`.${option.name}-list`);
     option.list.forEach(element => {
@@ -1780,6 +1777,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
+
 
 
 
@@ -1791,34 +1790,52 @@ const search = () => {
   };
   /**
    * Renvoie un tableau de recettes correspondantes à la recherche saisie
-   * @param {string} string
+   * @param {string} searchedText
    */
 
 
-  const recipeSearch = string => {
-    const results = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes.filter(recipe => recipe.name.toLowerCase().includes(string) || recipe.description.toLowerCase().includes(string) || recipe.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(string)));
+  const searchAndUpdateResult = searchedText => {
+    const results = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes.filter(recipe => recipe.containsText(searchedText));
     /*Actualisation de l'interfacce */
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(results);
-    /*Opérations sur les tags */
+    /*Actualisation des tags */
 
+    (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
+      name: "ingredients",
+      list: (0,_http__WEBPACK_IMPORTED_MODULE_1__.findIngredients)(results)
+    }, {
+      name: "appareils",
+      list: (0,_http__WEBPACK_IMPORTED_MODULE_1__.findAppliances)(results)
+    }, {
+      name: "ustensiles",
+      list: (0,_http__WEBPACK_IMPORTED_MODULE_1__.findUstensils)(results)
+    }]);
     /*TODO*/
   };
-  /*Déclenche la recherche à partir de 3 chars saisis */
+  /*Remove recipes from UI */
 
 
-  const length = e => {
-    const string = e.target.value.toLowerCase();
-    const searchLength = string.length;
-    const cards = document.querySelectorAll(".recettes article");
+  const cleanCurrentResult = () => {
+    removeDOMElements(document.querySelectorAll(".recettes article"));
+  };
+  /*La recherche ne se déclenche qu'à partir de 3 chars saisis */
 
-    if (searchLength > 2) {
-      removeDOMElements(cards);
-      recipeSearch(string);
+
+  const canSearch = searchedText => {
+    return searchedText.length > 2;
+  };
+
+  const onSearch = e => {
+    const searchedText = e.target.value.toLowerCase();
+
+    if (canSearch(searchedText)) {
+      cleanCurrentResult();
+      searchAndUpdateResult(searchedText);
     }
   };
 
-  input.addEventListener("input", e => length(e));
+  input.addEventListener("input", e => onSearch(e));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
@@ -1898,13 +1915,13 @@ __webpack_require__.r(__webpack_exports__);
 
 (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
   name: "ingredients",
-  list: _http__WEBPACK_IMPORTED_MODULE_4__.ingredients
+  list: (0,_http__WEBPACK_IMPORTED_MODULE_4__.findIngredients)(_http__WEBPACK_IMPORTED_MODULE_4__.allRecipes)
 }, {
   name: "appareils",
-  list: _http__WEBPACK_IMPORTED_MODULE_4__.appliance
+  list: (0,_http__WEBPACK_IMPORTED_MODULE_4__.findAppliances)(_http__WEBPACK_IMPORTED_MODULE_4__.allRecipes)
 }, {
   name: "ustensiles",
-  list: _http__WEBPACK_IMPORTED_MODULE_4__.ustensils
+  list: (0,_http__WEBPACK_IMPORTED_MODULE_4__.findUstensils)(_http__WEBPACK_IMPORTED_MODULE_4__.allRecipes)
 }]);
 (0,_components_filterSelect_select__WEBPACK_IMPORTED_MODULE_3__["default"])();
 (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_1__["default"])();

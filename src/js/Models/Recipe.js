@@ -9,37 +9,20 @@ class Recipe {
     this.description = data.description;
   }
 
-  /**
-   * Get ingredient & quantity from a recipe
-   * @returns {Array}
-   */
-  getIngredientsAndQuantity() {
-    return this.ingredients;
+  /*Retourne une chaine de caractères composée de name, description et ingrédient */
+  get searchLocation() {
+    return [
+      this.name,
+      this.description,
+      ...this.ingredients.map((i) => i.ingredient),
+    ]
+      .join()
+      .toLowerCase();
   }
 
-  /**
-   * Get ingredients list from a recipe
-   * @returns {Array}
-   */
-  getIngredients() {
-    const ingredients = [];
-    this.ingredients.forEach((ingredient) =>
-      ingredients.push(ingredient.ingredient.toLowerCase())
-    );
-
-    return ingredients;
+  containsText(text) {
+    return this.searchLocation.includes(text);
   }
-
-  getId() {
-    return this.id;
-  }
-  /*getAllIngredients() {
-    const getAllIngredients = [];
-    this.getAllRecipes().forEach((recipe) =>
-      pushInArray(getAllIngredients, recipe)
-    );
-    return getAllIngredients;
-  }*/
 }
 
 export default Recipe;
