@@ -74,18 +74,6 @@ const search = () => {
     document.querySelector("[name='appareils']"),
   ];
 
-  /*const searchAndUpdateTags = (searchedText, select) => {
-    const tags = document.querySelectorAll(`.${select}-list li`);
-
-    tags.forEach((tag) => {
-      if (!tag.textContent.toLowerCase().includes(searchedText)) {
-        tag.remove();
-      }
-    });
-
-    /*Update recipes UI */
-  /* };*/
-
   const onTagsSearch = (e) => {
     const searchedText = e.target.value.toLowerCase();
     const select = e.target.getAttribute("name");
@@ -96,6 +84,8 @@ const search = () => {
       recipe.containsText(searchedText, recipe.searchInIngredients)
     );
 
+    /*Refresh liste en fonction de tag */
+    /*TODO*/
     searchAndUpdateResult(searchedText, resultsFromTag);
   };
 
@@ -112,7 +102,7 @@ const search = () => {
       );
   });
 
-  /**On close tagrecuv */
+  /**On close tag */
 };
 
 export default search;
