@@ -4,6 +4,7 @@ import {
   findIngredients,
   findAppliances,
   findUstensils,
+  findTagInIngredients,
 } from "./http";
 import selectUI from "./components/filterSelect/selectUI";
 import createTag from "./components/tag";
@@ -19,7 +20,11 @@ const search = () => {
   /**
    * @param {string} searchedText
    */
-  const searchAndUpdateResult = (searchedText, resultsFromTag) => {
+  const searchAndUpdateResult = (
+    searchedText,
+    resultsFromTag,
+    selectListFromTag
+  ) => {
     results = resultsFromTag
       ? resultsFromTag
       : allRecipes.filter((recipe) =>
@@ -34,7 +39,7 @@ const search = () => {
     selectUI([
       {
         name: "ingredients",
-        list: findIngredients(results),
+        list: selectListFromTag ?? findIngredients(results),
       },
       {
         name: "appareils",
@@ -86,7 +91,11 @@ const search = () => {
 
     /*Refresh liste en fonction de tag */
     /*TODO*/
-    searchAndUpdateResult(searchedText, resultsFromTag);
+    searchAndUpdateResult(
+      searchedText,
+      resultsFromTag,
+      findTagInIngredients(resultsFromTag, searchedText)
+    );
   };
 
   const onEnterTag = (e, input) => {

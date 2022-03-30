@@ -100,6 +100,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "allRecipes": () => (/* binding */ allRecipes),
 /* harmony export */   "findAppliances": () => (/* binding */ findAppliances),
 /* harmony export */   "findIngredients": () => (/* binding */ findIngredients),
+/* harmony export */   "findTagInIngredients": () => (/* binding */ findTagInIngredients),
 /* harmony export */   "findUstensils": () => (/* binding */ findUstensils)
 /* harmony export */ });
 /* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
@@ -139,6 +140,18 @@ const findAppliances = recipes => {
     (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(appliances, cleanAppliance);
   });
   return appliances;
+};
+
+const findTagInIngredients = (recipes, tag) => {
+  let ingredients = [];
+  recipes.forEach(recipe => {
+    recipe.ingredients.forEach(ingredient => {
+      if (ingredient.ingredient.toLowerCase().includes(tag)) {
+        (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ingredients, ingredient.ingredient.toLowerCase());
+      }
+    });
+  });
+  return ingredients;
 };
 
 
@@ -1788,7 +1801,7 @@ const search = () => {
    */
 
 
-  const searchAndUpdateResult = (searchedText, resultsFromTag) => {
+  const searchAndUpdateResult = (searchedText, resultsFromTag, selectListFromTag) => {
     results = resultsFromTag ? resultsFromTag : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes.filter(recipe => recipe.containsText(searchedText, recipe.initialSearch));
     /*Actualisation de l'interfacce */
 
@@ -1798,7 +1811,7 @@ const search = () => {
 
     (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
       name: "ingredients",
-      list: (0,_http__WEBPACK_IMPORTED_MODULE_1__.findIngredients)(results)
+      list: selectListFromTag ?? (0,_http__WEBPACK_IMPORTED_MODULE_1__.findIngredients)(results)
     }, {
       name: "appareils",
       list: (0,_http__WEBPACK_IMPORTED_MODULE_1__.findAppliances)(results)
@@ -1832,23 +1845,17 @@ const search = () => {
 
   input.addEventListener("input", e => onSearch(e));
   const tagsInput = [document.querySelector("[name='ingredients']"), document.querySelector("[name='ustensiles']"), document.querySelector("[name='appareils']")];
-  /*const searchAndUpdateTags = (searchedText, select) => {
-    const tags = document.querySelectorAll(`.${select}-list li`);
-     tags.forEach((tag) => {
-      if (!tag.textContent.toLowerCase().includes(searchedText)) {
-        tag.remove();
-      }
-    });
-     /*Update recipes UI */
-
-  /* };*/
 
   const onTagsSearch = e => {
     const searchedText = e.target.value.toLowerCase();
     const select = e.target.getAttribute("name");
     results = results.length > 0 ? results : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
     const resultsFromTag = results.filter(recipe => recipe.containsText(searchedText, recipe.searchInIngredients));
-    searchAndUpdateResult(searchedText, resultsFromTag);
+    /*Refresh liste en fonction de tag */
+
+    /*TODO*/
+
+    searchAndUpdateResult(searchedText, resultsFromTag, (0,_http__WEBPACK_IMPORTED_MODULE_1__.findTagInIngredients)(resultsFromTag, searchedText));
   };
 
   const onEnterTag = (e, input) => {
@@ -1860,7 +1867,7 @@ const search = () => {
   tagsInput.forEach(tagInput => {
     tagInput.addEventListener("input", e => onTagsSearch(e)), tagInput.addEventListener("keydown", (e, input) => onEnterTag(e, tagInput));
   });
-  /**On close tagrecuv */
+  /**On close tag */
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);

@@ -35,4 +35,22 @@ const findAppliances = (recipes) => {
   return appliances;
 };
 
-export { allRecipes, findIngredients, findUstensils, findAppliances };
+const findTagInIngredients = (recipes, tag) => {
+  let ingredients = [];
+  recipes.forEach((recipe) => {
+    recipe.ingredients.forEach((ingredient) => {
+      if (ingredient.ingredient.toLowerCase().includes(tag)) {
+        pushInArray(ingredients, ingredient.ingredient.toLowerCase());
+      }
+    });
+  });
+  return ingredients;
+};
+
+export {
+  allRecipes,
+  findIngredients,
+  findUstensils,
+  findAppliances,
+  findTagInIngredients,
+};
