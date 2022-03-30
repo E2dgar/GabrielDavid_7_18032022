@@ -1,0 +1,36 @@
+.tags {
+  display: flex;
+  padding: 1rem 0;
+
+  .tag {
+    padding: 8px 20px 9px;
+    border-radius: 5px;
+    color: $white;
+    font-size: $f14;
+    font-weight: bold;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: url('/assets/img/close-tag.png') no-repeat, #0000;
+      height: 20px;
+      width: 20px;
+      margin-left: .5rem;
+    }
+
+    &.ingredients-tag {
+      background-color: $blue;
+    }
+
+    &.appareils-tag {
+      background-color: $green;
+    }
+
+    &.ustensiles-tag {
+      background-color: $red;
+    }
+  }
+}

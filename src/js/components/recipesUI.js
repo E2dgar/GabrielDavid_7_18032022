@@ -1,7 +1,9 @@
 import { allRecipes } from "../http";
 
 const refreshUiRecipes = (searchedRecipes) => {
+  document.querySelectorAll("article").forEach((article) => article.remove());
   const data = searchedRecipes ?? allRecipes;
+  console.log("data", data);
   const noResultsElement = document.querySelector(".no-results");
 
   if (data.length === 0) {

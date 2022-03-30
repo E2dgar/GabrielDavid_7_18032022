@@ -21,7 +21,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const refreshUiRecipes = searchedRecipes => {
+  document.querySelectorAll("article").forEach(article => article.remove());
   const data = searchedRecipes ?? _http__WEBPACK_IMPORTED_MODULE_0__.allRecipes;
+  console.log("data", data);
   const noResultsElement = document.querySelector(".no-results");
 
   if (data.length === 0) {
@@ -1541,15 +1543,25 @@ class Recipe {
     this.ustensils = data.ustensils;
     this.description = data.description;
   }
-  /*Retourne une chaine de caractères composée de name, description et ingrédient */
 
-
-  get searchLocation() {
-    return [this.name, this.description, ...this.ingredients.map(i => i.ingredient)].join().toLowerCase();
+  get searchInIngredients() {
+    return [...this.ingredients.map(i => i.ingredient)].join().toLowerCase();
   }
 
-  containsText(text) {
-    return this.searchLocation.includes(text);
+  get searchInUstensils() {
+    return [this.ustensils].join().toLowerCase();
+  }
+
+  get searchInAppliance() {
+    return [this.appliance].join().toLowerCase();
+  }
+
+  get initialSearch() {
+    return [this.name, this.description, this.searchInIngredients].join().toLowerCase();
+  }
+
+  containsText(text, location) {
+    return location.includes(text);
   }
 
 }
@@ -1596,50 +1608,19 @@ const selectUI = options => {
     optionsLi.forEach(option => option.remove());
   }
 
+  let optionsCount = 0;
   options.forEach(option => {
     let targetedList = document.querySelector(`.${option.name}-list`);
     option.list.forEach(element => {
+      optionsCount++;
       let optionLi = document.createElement("li");
-      optionLi.setAttribute("id", element);
+      optionLi.setAttribute("id", option.name + "-" + optionsCount);
       optionLi.setAttribute("role", "option");
       optionLi.setAttribute("tabindex", 0);
       optionLi.textContent = element;
       targetedList.append(optionLi);
     });
   });
-  /*const listboxArea = document.createElement("div");
-  listboxArea.className = `listbox-area ${options.style}-style`;
-   const label = document.createElement("span");
-  label.className = "label";
-  label.setAttribute("id", options.name);
-   const optionsWrapper = document.createElement("div");
-  optionsWrapper.setAttribute("id", `options-wrapper-${options.name}`);
-   const selectedOpt = document.createElement("button");
-  selectedOpt.className = "select-button";
-  selectedOpt.setAttribute("id", `selected-opt-${options.name}`);
-  selectedOpt.setAttribute("aria-haspopup", "listbox");
-  selectedOpt.setAttribute(
-    "aria-labelledby",
-    `${options.name} selected-opt-${options.name}`
-  );
-  selectedOpt.textContent = options.name;
-   const list = document.createElement("ul");
-  list.className = "hidden";
-  list.setAttribute("id", `options-list-${options.name}`);
-  list.setAttribute("role", "listbox");
-  list.setAttribute("aria-labelledby", options.name);
-  list.setAttribute("tabindex", 0);
-   options.list.forEach((option) => {
-    let optionLi = document.createElement("li");
-    optionLi.setAttribute("id", option);
-    optionLi.setAttribute("role", "option");
-    optionLi.setAttribute("tabindex", 0);
-    optionLi.textContent = option;
-     list.append(optionLi);
-  });
-   optionsWrapper.append(selectedOpt, list);
-  listboxArea.append(label, optionsWrapper);
-   document.querySelector(".fields").append(listboxArea);*/
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (selectUI);
@@ -1655,6 +1636,7 @@ __webpack_require__.r(__webpack_exports__);
 const select = options => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
+  const inputsCombo = document.querySelectorAll(".combo-lists input");
   /*const options = document.querySelectorAll('[role=option]')*/
 
   /**
@@ -1736,6 +1718,9 @@ const select = options => {
     document.querySelector(".show .list-wrapper").classList.add("hidden");
     document.querySelector(".show .list-button").removeAttribute("aria-expanded");
     document.querySelector(".show").classList.remove("show");
+    /* document
+      .querySelectorAll(".combo-lists input")
+      .forEach((input) => (input.value = ""));*/
   };
 
   const hideList = e => {
@@ -1748,6 +1733,13 @@ const select = options => {
 
   document.addEventListener("click", e => hideList(e));
   closeButtons.forEach(button => button.addEventListener("click", hiddenListActions));
+  inputsCombo.forEach(input => {
+    input.addEventListener("keydown", e => {
+      if (e.code === "Enter") {
+        hiddenListActions();
+      }
+    });
+  });
   /* Focus item and select on mouse click    */
 
   /*const clickItem = e => {
@@ -1778,26 +1770,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /* harmony import */ var _components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
+/* harmony import */ var _components_tag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+
 
 
 
 
 const search = () => {
   const input = document.querySelector("[name='q']");
+  let results = [];
 
   const removeDOMElements = elements => {
     elements.forEach(element => element.remove());
   };
   /**
-   * Renvoie un tableau de recettes correspondantes à la recherche saisie
    * @param {string} searchedText
    */
 
 
-  const searchAndUpdateResult = searchedText => {
-    const results = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes.filter(recipe => recipe.containsText(searchedText));
+  const searchAndUpdateResult = (searchedText, resultsFromTag) => {
+    results = resultsFromTag ? resultsFromTag : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes.filter(recipe => recipe.containsText(searchedText, recipe.initialSearch));
     /*Actualisation de l'interfacce */
 
+    console.log(results);
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(results);
     /*Actualisation des tags */
 
@@ -1836,9 +1831,62 @@ const search = () => {
   };
 
   input.addEventListener("input", e => onSearch(e));
+  const tagsInput = [document.querySelector("[name='ingredients']"), document.querySelector("[name='ustensiles']"), document.querySelector("[name='appareils']")];
+  /*const searchAndUpdateTags = (searchedText, select) => {
+    const tags = document.querySelectorAll(`.${select}-list li`);
+     tags.forEach((tag) => {
+      if (!tag.textContent.toLowerCase().includes(searchedText)) {
+        tag.remove();
+      }
+    });
+     /*Update recipes UI */
+
+  /* };*/
+
+  const onTagsSearch = e => {
+    const searchedText = e.target.value.toLowerCase();
+    const select = e.target.getAttribute("name");
+    results = results.length > 0 ? results : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+    const resultsFromTag = results.filter(recipe => recipe.containsText(searchedText, recipe.searchInIngredients));
+    searchAndUpdateResult(searchedText, resultsFromTag);
+  };
+
+  const onEnterTag = (e, input) => {
+    if (e.code === "Enter") {
+      (0,_components_tag__WEBPACK_IMPORTED_MODULE_3__["default"])(input.value, input.getAttribute("name"));
+    }
+  };
+
+  tagsInput.forEach(tagInput => {
+    tagInput.addEventListener("input", e => onTagsSearch(e)), tagInput.addEventListener("keydown", (e, input) => onEnterTag(e, tagInput));
+  });
+  /**On close tagrecuv */
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
+
+/***/ }),
+/* 10 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const createTag = (textTag, tagType) => {
+  console.log("text", tagType);
+  const tagsContainer = document.querySelector(".tags");
+  const box = document.createElement("div");
+  box.className = `tag ${tagType}-tag`;
+  const content = document.createElement("span");
+  content.textContent = textTag;
+  const closeTag = document.createElement("button");
+  closeTag.className = "close-tag";
+  box.append(content, closeTag);
+  tagsContainer.append(box);
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (createTag);
 
 /***/ })
 /******/ 	]);

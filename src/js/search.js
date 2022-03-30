@@ -6,24 +6,28 @@ import {
   findUstensils,
 } from "./http";
 import selectUI from "./components/filterSelect/selectUI";
+import createTag from "./components/tag";
 
 const search = () => {
   const input = document.querySelector("[name='q']");
+  let results = [];
 
   const removeDOMElements = (elements) => {
     elements.forEach((element) => element.remove());
   };
 
   /**
-   * Renvoie un tableau de recettes correspondantes à la recherche saisie
    * @param {string} searchedText
    */
-  const searchAndUpdateResult = (searchedText) => {
-    const results = allRecipes.filter((recipe) =>
-      recipe.containsText(searchedText)
-    );
+  const searchAndUpdateResult = (searchedText, resultsFromTag) => {
+    results = resultsFromTag
+      ? resultsFromTag
+      : allRecipes.filter((recipe) =>
+          recipe.containsText(searchedText, recipe.initialSearch)
+        );
 
     /*Actualisation de l'interfacce */
+    console.log(results);
     refreshUiRecipes(results);
 
     /*Actualisation des tags */
@@ -63,6 +67,52 @@ const search = () => {
   };
 
   input.addEventListener("input", (e) => onSearch(e));
+
+  const tagsInput = [
+    document.querySelector("[name='ingredients']"),
+    document.querySelector("[name='ustensiles']"),
+    document.querySelector("[name='appareils']"),
+  ];
+
+  /*const searchAndUpdateTags = (searchedText, select) => {
+    const tags = document.querySelectorAll(`.${select}-list li`);
+
+    tags.forEach((tag) => {
+      if (!tag.textContent.toLowerCase().includes(searchedText)) {
+        tag.remove();
+      }
+    });
+
+    /*Update recipes UI */
+  /* };*/
+
+  const onTagsSearch = (e) => {
+    const searchedText = e.target.value.toLowerCase();
+    const select = e.target.getAttribute("name");
+
+    results = results.length > 0 ? results : allRecipes;
+
+    const resultsFromTag = results.filter((recipe) =>
+      recipe.containsText(searchedText, recipe.searchInIngredients)
+    );
+
+    searchAndUpdateResult(searchedText, resultsFromTag);
+  };
+
+  const onEnterTag = (e, input) => {
+    if (e.code === "Enter") {
+      createTag(input.value, input.getAttribute("name"));
+    }
+  };
+
+  tagsInput.forEach((tagInput) => {
+    tagInput.addEventListener("input", (e) => onTagsSearch(e)),
+      tagInput.addEventListener("keydown", (e, input) =>
+        onEnterTag(e, tagInput)
+      );
+  });
+
+  /**On close tagrecuv */
 };
 
 export default search;

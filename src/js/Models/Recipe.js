@@ -9,19 +9,26 @@ class Recipe {
     this.description = data.description;
   }
 
-  /*Retourne une chaine de caractères composée de name, description et ingrédient */
-  get searchLocation() {
-    return [
-      this.name,
-      this.description,
-      ...this.ingredients.map((i) => i.ingredient),
-    ]
+  get searchInIngredients() {
+    return [...this.ingredients.map((i) => i.ingredient)].join().toLowerCase();
+  }
+
+  get searchInUstensils() {
+    return [this.ustensils].join().toLowerCase();
+  }
+
+  get searchInAppliance() {
+    return [this.appliance].join().toLowerCase();
+  }
+
+  get initialSearch() {
+    return [this.name, this.description, this.searchInIngredients]
       .join()
       .toLowerCase();
   }
 
-  containsText(text) {
-    return this.searchLocation.includes(text);
+  containsText(text, location) {
+    return location.includes(text);
   }
 }
 

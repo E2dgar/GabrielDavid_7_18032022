@@ -1,6 +1,7 @@
 const select = (options) => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
+  const inputsCombo = document.querySelectorAll(".combo-lists input");
   /*const options = document.querySelectorAll('[role=option]')*/
 
   /**
@@ -88,7 +89,11 @@ const select = (options) => {
       .querySelector(".show .list-button")
       .removeAttribute("aria-expanded");
     document.querySelector(".show").classList.remove("show");
+    /* document
+      .querySelectorAll(".combo-lists input")
+      .forEach((input) => (input.value = ""));*/
   };
+
   const hideList = (e) => {
     if (
       !document.querySelector(".show") ||
@@ -99,10 +104,18 @@ const select = (options) => {
     }
     hiddenListActions();
   };
+
   document.addEventListener("click", (e) => hideList(e));
   closeButtons.forEach((button) =>
     button.addEventListener("click", hiddenListActions)
   );
+  inputsCombo.forEach((input) => {
+    input.addEventListener("keydown", (e) => {
+      if (e.code === "Enter") {
+        hiddenListActions();
+      }
+    });
+  });
 
   /* Focus item and select on mouse click    */
   /*const clickItem = e => {
