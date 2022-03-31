@@ -8,6 +8,7 @@ import {
 } from "./http";
 import selectUI from "./components/filterSelect/selectUI";
 import createTag from "./components/tag";
+import { initialState } from "./services";
 
 const search = () => {
   const input = document.querySelector("[name='q']");
@@ -31,8 +32,10 @@ const search = () => {
           recipe.containsText(searchedText, recipe.initialSearch)
         );
 
+    /* If tags */
+    /* TODO */
+
     /*Actualisation de l'interfacce */
-    console.log(results);
     refreshUiRecipes(results);
 
     /*Actualisation des tags */
@@ -63,11 +66,19 @@ const search = () => {
     return searchedText.length > 2;
   };
 
+  const reset = (searchedText) => {
+    return !searchedText;
+  };
+
   const onSearch = (e) => {
     const searchedText = e.target.value.toLowerCase();
     if (canSearch(searchedText)) {
       cleanCurrentResult();
       searchAndUpdateResult(searchedText);
+    }
+
+    if (reset(searchedText)) {
+      initialState();
     }
   };
 
@@ -106,9 +117,7 @@ const search = () => {
 
   tagsInput.forEach((tagInput) => {
     tagInput.addEventListener("input", (e) => onTagsSearch(e)),
-      tagInput.addEventListener("keydown", (e, input) =>
-        onEnterTag(e, tagInput)
-      );
+      tagInput.addEventListener("keydown", (e) => onEnterTag(e, tagInput));
   });
 
   /**On close tag */

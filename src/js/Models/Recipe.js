@@ -14,11 +14,11 @@ class Recipe {
   }
 
   get searchInUstensils() {
-    return [this.ustensils].join().toLowerCase();
+    return [this.ustensils].toLowerCase();
   }
 
   get searchInAppliance() {
-    return [this.appliance].join().toLowerCase();
+    return [this.appliance].toLowerCase();
   }
 
   get initialSearch() {
