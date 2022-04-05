@@ -1,5 +1,4 @@
 const createTag = (textTag, tagType) => {
-  console.log("text", tagType);
   const tagsContainer = document.querySelector(".tags");
   const box = document.createElement("div");
   box.className = `tag ${tagType}-tag`;
@@ -9,9 +8,12 @@ const createTag = (textTag, tagType) => {
 
   const closeTag = document.createElement("button");
   closeTag.className = "close-tag";
+  closeTag.setAttribute("data-tag", `${tagType}-tag`);
 
   box.append(content, closeTag);
   tagsContainer.append(box);
+
+  return closeTag;
 };
 
 export default createTag;

@@ -7,8 +7,6 @@ import {
   findAppliances,
 } from "./http";
 
-const replace = (pattern, string) => string.replace(pattern, "");
-
 /**
  *
  * @param {Array} array
@@ -39,4 +37,4 @@ const initialState = () => {
   recipesUI();
 };
 
-export { replace, pushInArray, initialState };
+export { pushInArray, initialState };

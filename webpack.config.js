@@ -13,6 +13,14 @@ module.exports = {
   experiments: {
     topLevelAwait: true
   },
+	devServer: {
+    static: {
+      directory: path.resolve(__dirname),
+    },
+		hot: true,
+    compress: true,
+    port: 9000,
+  },
   plugins: [
 	  new MiniCssExtractPlugin({
 		  filename: "style.css",

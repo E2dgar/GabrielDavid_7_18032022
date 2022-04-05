@@ -16,8 +16,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "initialState": () => (/* binding */ initialState),
-/* harmony export */   "pushInArray": () => (/* binding */ pushInArray),
-/* harmony export */   "replace": () => (/* binding */ replace)
+/* harmony export */   "pushInArray": () => (/* binding */ pushInArray)
 /* harmony export */ });
 /* harmony import */ var _components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
@@ -25,14 +24,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-const replace = (pattern, string) => string.replace(pattern, "");
 /**
  *
  * @param {Array} array
  * @param {string} item
  */
-
 
 const pushInArray = (array, item) => {
   if (!array.includes(item)) {
@@ -178,7 +174,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "allRecipes": () => (/* binding */ allRecipes),
 /* harmony export */   "findAppliances": () => (/* binding */ findAppliances),
 /* harmony export */   "findIngredients": () => (/* binding */ findIngredients),
-/* harmony export */   "findTagInIngredients": () => (/* binding */ findTagInIngredients),
+/* harmony export */   "findTagIn": () => (/* binding */ findTagIn),
 /* harmony export */   "findUstensils": () => (/* binding */ findUstensils)
 /* harmony export */ });
 /* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
@@ -201,35 +197,55 @@ const findIngredients = recipes => {
 };
 
 const findUstensils = recipes => {
-  let ustensils = [];
+  let ustensiles = [];
   recipes.forEach(recipe => {
-    recipe.ustensils.forEach(ustensil => {
-      let cleanUstensil = ustensil.toLowerCase().replace(/\s\([0-99]\)/, "");
-      (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ustensils, cleanUstensil);
+    recipe.ustensiles.forEach(ustensile => {
+      let cleanUstensile = ustensile.toLowerCase().replace(/\s\([0-99]\)/, "");
+      (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ustensiles, cleanUstensile);
     });
   });
-  return ustensils;
+  return ustensiles;
 };
 
 const findAppliances = recipes => {
-  let appliances = [];
+  let appareils = [];
   recipes.forEach(recipe => {
-    let cleanAppliance = recipe.appliance.toLowerCase().replace(".", "");
-    (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(appliances, cleanAppliance);
+    let cleanAppareil = recipe.appareils.toLowerCase().replace(".", "");
+    (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(appareils, cleanAppareil);
   });
-  return appliances;
+  return appareils;
 };
 
-const findTagInIngredients = (recipes, tag) => {
-  let ingredients = [];
+const findTagIn = (recipes, tag, location) => {
+  let tags = [];
   recipes.forEach(recipe => {
-    recipe.ingredients.forEach(ingredient => {
-      if (ingredient.ingredient.toLowerCase().includes(tag)) {
-        (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(ingredients, ingredient.ingredient.toLowerCase());
-      }
-    });
+    switch (location) {
+      case "ingredients":
+        recipe.ingredients.forEach(ingredient => {
+          if (ingredient.ingredient.toLowerCase().includes(tag)) {
+            (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(tags, ingredient.ingredient.toLowerCase());
+          }
+        });
+        break;
+
+      case "ustensiles":
+        recipe.ustensiles.forEach(ustensile => {
+          if (ustensile.toLowerCase().includes(tag)) {
+            (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(tags, ustensile.toLowerCase());
+          }
+        });
+        break;
+
+      case "appareils":
+        recipe.appareils.forEach(appareil => {
+          if (appareil.toLowerCase().includes(tag)) {
+            (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(tags, appareil.toLowerCase());
+          }
+        });
+        break;
+    }
   });
-  return ingredients;
+  return tags;
 };
 
 
@@ -1630,8 +1646,8 @@ class Recipe {
     this.name = data.name;
     this.time = data.time;
     this.ingredients = data.ingredients;
-    this.appliance = data.appliance;
-    this.ustensils = data.ustensils;
+    this.appareils = data.appliance;
+    this.ustensiles = data.ustensils;
     this.description = data.description;
   }
 
@@ -1639,12 +1655,12 @@ class Recipe {
     return [...this.ingredients.map(i => i.ingredient)].join().toLowerCase();
   }
 
-  get searchInUstensils() {
-    return [this.ustensils].toLowerCase();
+  get searchInUstensiles() {
+    return [this.ustensiles].join().toLowerCase();
   }
 
-  get searchInAppliance() {
-    return [this.appliance].toLowerCase();
+  get searchInAppareils() {
+    return [this.appareils].join().toLowerCase();
   }
 
   get initialSearch() {
@@ -1883,25 +1899,33 @@ const search = () => {
   const onTagsSearch = e => {
     const searchedText = e.target.value.toLowerCase();
     const select = e.target.getAttribute("name");
-    results = results.length > 0 ? results : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
-    const resultsFromTag = results.filter(recipe => recipe.containsText(searchedText, recipe.searchInIngredients));
+    let location = "searchIn" + select.charAt(0).toUpperCase() + select.slice(1);
+    results = results.length === 0 || searchedText.length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : results;
+    const resultsFromTag = results.filter(recipe => recipe.containsText(searchedText, recipe[location]));
     /*Refresh liste en fonction de tag */
 
     /*TODO*/
 
-    searchAndUpdateResult(searchedText, resultsFromTag, (0,_http__WEBPACK_IMPORTED_MODULE_1__.findTagInIngredients)(resultsFromTag, searchedText));
+    searchAndUpdateResult(searchedText, resultsFromTag, (0,_http__WEBPACK_IMPORTED_MODULE_1__.findTagIn)(resultsFromTag, searchedText, select.toLowerCase()));
   };
 
   const onEnterTag = (e, input) => {
     if (e.code === "Enter") {
-      (0,_components_tag__WEBPACK_IMPORTED_MODULE_3__["default"])(input.value, input.getAttribute("name"));
+      const inputName = input.getAttribute("name");
+      (0,_components_tag__WEBPACK_IMPORTED_MODULE_3__["default"])(input.value, inputName).addEventListener("click", e => closeTag(e));
     }
+  };
+  /**On close tag */
+
+
+  const closeTag = e => {
+    document.querySelector(`.${e.currentTarget.getAttribute("data-tag")}`).remove();
+    /*Update results TODO */
   };
 
   tagsInput.forEach(tagInput => {
     tagInput.addEventListener("input", e => onTagsSearch(e)), tagInput.addEventListener("keydown", e => onEnterTag(e, tagInput));
   });
-  /**On close tag */
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
@@ -1915,7 +1939,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const createTag = (textTag, tagType) => {
-  console.log("text", tagType);
   const tagsContainer = document.querySelector(".tags");
   const box = document.createElement("div");
   box.className = `tag ${tagType}-tag`;
@@ -1923,8 +1946,10 @@ const createTag = (textTag, tagType) => {
   content.textContent = textTag;
   const closeTag = document.createElement("button");
   closeTag.className = "close-tag";
+  closeTag.setAttribute("data-tag", `${tagType}-tag`);
   box.append(content, closeTag);
   tagsContainer.append(box);
+  return closeTag;
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (createTag);

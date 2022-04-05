@@ -4,7 +4,7 @@ import {
   findIngredients,
   findAppliances,
   findUstensils,
-  findTagInIngredients,
+  findTagIn,
 } from "./http";
 import selectUI from "./components/filterSelect/selectUI";
 import createTag from "./components/tag";
@@ -93,11 +93,14 @@ const search = () => {
   const onTagsSearch = (e) => {
     const searchedText = e.target.value.toLowerCase();
     const select = e.target.getAttribute("name");
+    let location =
+      "searchIn" + select.charAt(0).toUpperCase() + select.slice(1);
 
-    results = results.length > 0 ? results : allRecipes;
+    results =
+      results.length === 0 || searchedText.length === 0 ? allRecipes : results;
 
     const resultsFromTag = results.filter((recipe) =>
-      recipe.containsText(searchedText, recipe.searchInIngredients)
+      recipe.containsText(searchedText, recipe[location])
     );
 
     /*Refresh liste en fonction de tag */
@@ -105,22 +108,31 @@ const search = () => {
     searchAndUpdateResult(
       searchedText,
       resultsFromTag,
-      findTagInIngredients(resultsFromTag, searchedText)
+      findTagIn(resultsFromTag, searchedText, select.toLowerCase())
     );
   };
 
   const onEnterTag = (e, input) => {
     if (e.code === "Enter") {
-      createTag(input.value, input.getAttribute("name"));
+      const inputName = input.getAttribute("name");
+      createTag(input.value, inputName).addEventListener("click", (e) =>
+        closeTag(e)
+      );
     }
+  };
+
+  /**On close tag */
+  const closeTag = (e) => {
+    document
+      .querySelector(`.${e.currentTarget.getAttribute("data-tag")}`)
+      .remove();
+    /*Update results TODO */
   };
 
   tagsInput.forEach((tagInput) => {
     tagInput.addEventListener("input", (e) => onTagsSearch(e)),
       tagInput.addEventListener("keydown", (e) => onEnterTag(e, tagInput));
   });
-
-  /**On close tag */
 };
 
 export default search;

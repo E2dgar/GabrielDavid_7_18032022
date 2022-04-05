@@ -4,8 +4,8 @@ class Recipe {
     this.name = data.name;
     this.time = data.time;
     this.ingredients = data.ingredients;
-    this.appliance = data.appliance;
-    this.ustensils = data.ustensils;
+    this.appareils = data.appliance;
+    this.ustensiles = data.ustensils;
     this.description = data.description;
   }
 
@@ -13,12 +13,12 @@ class Recipe {
     return [...this.ingredients.map((i) => i.ingredient)].join().toLowerCase();
   }
 
-  get searchInUstensils() {
-    return [this.ustensils].toLowerCase();
+  get searchInUstensiles() {
+    return [this.ustensiles].join().toLowerCase();
   }
 
-  get searchInAppliance() {
-    return [this.appliance].toLowerCase();
+  get searchInAppareils() {
+    return [this.appareils].join().toLowerCase();
   }
 
   get initialSearch() {
