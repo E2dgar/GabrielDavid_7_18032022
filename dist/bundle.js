@@ -217,8 +217,11 @@ const findAppliances = recipes => {
 };
 
 const findTagIn = (recipes, tag, location) => {
+  console.log(location);
   let tags = [];
   recipes.forEach(recipe => {
+    console.log("app", recipe.ustensiles);
+
     switch (location) {
       case "ingredients":
         recipe.ingredients.forEach(ingredient => {
@@ -237,7 +240,7 @@ const findTagIn = (recipes, tag, location) => {
         break;
 
       case "appareils":
-        recipe.appareils.forEach(appareil => {
+        recipe.appareils.split().forEach(appareil => {
           if (appareil.toLowerCase().includes(tag)) {
             (0,_services__WEBPACK_IMPORTED_MODULE_2__.pushInArray)(tags, appareil.toLowerCase());
           }
@@ -1831,6 +1834,11 @@ __webpack_require__.r(__webpack_exports__);
 const search = () => {
   const input = document.querySelector("[name='q']");
   let results = [];
+  let selectMethods = {
+    ingredients: null,
+    appareils: null,
+    ustensiles: null
+  };
 
   const removeDOMElements = elements => {
     elements.forEach(element => element.remove());
@@ -1840,12 +1848,9 @@ const search = () => {
    */
 
 
-  const searchAndUpdateResult = (searchedText, resultsFromTag, selectListFromTag) => {
+  const searchAndUpdateResult = (searchedText, resultsFromTag, selectListFromTag, selectType) => {
     results = resultsFromTag ? resultsFromTag : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes.filter(recipe => recipe.containsText(searchedText, recipe.initialSearch));
-    /* If tags */
-
-    /* TODO */
-
+    selectMethods[selectType] = selectListFromTag;
     /*Actualisation de l'interfacce */
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(results);
@@ -1853,13 +1858,13 @@ const search = () => {
 
     (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
       name: "ingredients",
-      list: selectListFromTag ?? (0,_http__WEBPACK_IMPORTED_MODULE_1__.findIngredients)(results)
+      list: selectMethods["ingredients"] ? selectListFromTag : (0,_http__WEBPACK_IMPORTED_MODULE_1__.findIngredients)(results)
     }, {
       name: "appareils",
-      list: (0,_http__WEBPACK_IMPORTED_MODULE_1__.findAppliances)(results)
+      list: selectMethods["appareils"] ? selectListFromTag : (0,_http__WEBPACK_IMPORTED_MODULE_1__.findAppliances)(results)
     }, {
       name: "ustensiles",
-      list: (0,_http__WEBPACK_IMPORTED_MODULE_1__.findUstensils)(results)
+      list: selectMethods["ustensiles"] ? selectListFromTag : (0,_http__WEBPACK_IMPORTED_MODULE_1__.findUstensils)(results)
     }]);
     /*TODO*/
   };
@@ -1896,23 +1901,26 @@ const search = () => {
   input.addEventListener("input", e => onSearch(e));
   const tagsInput = [document.querySelector("[name='ingredients']"), document.querySelector("[name='ustensiles']"), document.querySelector("[name='appareils']")];
 
-  const onTagsSearch = e => {
-    const searchedText = e.target.value.toLowerCase();
-    const select = e.target.getAttribute("name");
-    let location = "searchIn" + select.charAt(0).toUpperCase() + select.slice(1);
-    results = results.length === 0 || searchedText.length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : results;
-    const resultsFromTag = results.filter(recipe => recipe.containsText(searchedText, recipe[location]));
+  const onTagsSearch = (searchedTag, selectType) => {
+    let location = "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
+    results = results.length === 0 || searchedTag.length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : results;
+    const resultsFromTag = results.filter(recipe => recipe.containsText(searchedTag, recipe[location]));
     /*Refresh liste en fonction de tag */
 
     /*TODO*/
 
-    searchAndUpdateResult(searchedText, resultsFromTag, (0,_http__WEBPACK_IMPORTED_MODULE_1__.findTagIn)(resultsFromTag, searchedText, select.toLowerCase()));
+    searchAndUpdateResult(searchedTag, resultsFromTag, (0,_http__WEBPACK_IMPORTED_MODULE_1__.findTagIn)(resultsFromTag, searchedTag, selectType.toLowerCase()), selectType.toLowerCase());
   };
 
-  const onEnterTag = (e, input) => {
+  const onValidateTag = (e, input) => {
     if (e.code === "Enter") {
-      const inputName = input.getAttribute("name");
+      e.preventDefault();
+      const inputName = input.getAttribute("name") + "-tag";
       (0,_components_tag__WEBPACK_IMPORTED_MODULE_3__["default"])(input.value, inputName).addEventListener("click", e => closeTag(e));
+    }
+
+    if (!e.code) {
+      (0,_components_tag__WEBPACK_IMPORTED_MODULE_3__["default"])(e.target.textContent, e.target.getAttribute("id").replace(/[0-9]?[0-9]/, "tag")).addEventListener("click", e => closeTag(e));
     }
   };
   /**On close tag */
@@ -1924,7 +1932,22 @@ const search = () => {
   };
 
   tagsInput.forEach(tagInput => {
-    tagInput.addEventListener("input", e => onTagsSearch(e)), tagInput.addEventListener("keydown", e => onEnterTag(e, tagInput));
+    tagInput.addEventListener("input", e => {
+      const searchedTag = e.target.value.toLowerCase();
+      const selectType = e.target.getAttribute("name");
+      onTagsSearch(searchedTag, selectType);
+    });
+    tagInput.addEventListener("keydown", e => {
+      if (e.code === "Enter") {
+        onValidateTag(e, tagInput);
+      }
+    });
+  });
+  document.querySelectorAll(".combo-list li").forEach(li => {
+    li.addEventListener("click", li => {
+      onValidateTag(li);
+      onTagsSearch(li.target.textContent, li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, ""));
+    });
   });
 };
 
@@ -1941,12 +1964,12 @@ __webpack_require__.r(__webpack_exports__);
 const createTag = (textTag, tagType) => {
   const tagsContainer = document.querySelector(".tags");
   const box = document.createElement("div");
-  box.className = `tag ${tagType}-tag`;
+  box.className = `tag ${tagType}`;
   const content = document.createElement("span");
   content.textContent = textTag;
   const closeTag = document.createElement("button");
   closeTag.className = "close-tag";
-  closeTag.setAttribute("data-tag", `${tagType}-tag`);
+  closeTag.setAttribute("data-tag", `${tagType}`);
   box.append(content, closeTag);
   tagsContainer.append(box);
   return closeTag;

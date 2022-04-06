@@ -54,7 +54,7 @@ const findTagIn = (recipes, tag, location) => {
         });
         break;
       case "appareils":
-        recipe.appareils.forEach((appareil) => {
+        recipe.appareils.split().forEach((appareil) => {
           if (appareil.toLowerCase().includes(tag)) {
             pushInArray(tags, appareil.toLowerCase());
           }

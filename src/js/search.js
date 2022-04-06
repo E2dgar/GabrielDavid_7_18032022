@@ -14,6 +14,12 @@ const search = () => {
   const input = document.querySelector("[name='q']");
   let results = [];
 
+  let selectMethods = {
+    ingredients: null,
+    appareils: null,
+    ustensiles: null,
+  };
+
   const removeDOMElements = (elements) => {
     elements.forEach((element) => element.remove());
   };
@@ -24,7 +30,8 @@ const search = () => {
   const searchAndUpdateResult = (
     searchedText,
     resultsFromTag,
-    selectListFromTag
+    selectListFromTag,
+    selectType
   ) => {
     results = resultsFromTag
       ? resultsFromTag
@@ -32,8 +39,7 @@ const search = () => {
           recipe.containsText(searchedText, recipe.initialSearch)
         );
 
-    /* If tags */
-    /* TODO */
+    selectMethods[selectType] = selectListFromTag;
 
     /*Actualisation de l'interfacce */
     refreshUiRecipes(results);
@@ -42,15 +48,21 @@ const search = () => {
     selectUI([
       {
         name: "ingredients",
-        list: selectListFromTag ?? findIngredients(results),
+        list: selectMethods["ingredients"]
+          ? selectListFromTag
+          : findIngredients(results),
       },
       {
         name: "appareils",
-        list: findAppliances(results),
+        list: selectMethods["appareils"]
+          ? selectListFromTag
+          : findAppliances(results),
       },
       {
         name: "ustensiles",
-        list: findUstensils(results),
+        list: selectMethods["ustensiles"]
+          ? selectListFromTag
+          : findUstensils(results),
       },
     ]);
     /*TODO*/
@@ -90,34 +102,41 @@ const search = () => {
     document.querySelector("[name='appareils']"),
   ];
 
-  const onTagsSearch = (e) => {
-    const searchedText = e.target.value.toLowerCase();
-    const select = e.target.getAttribute("name");
+  const onTagsSearch = (searchedTag, selectType) => {
     let location =
-      "searchIn" + select.charAt(0).toUpperCase() + select.slice(1);
+      "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
 
     results =
-      results.length === 0 || searchedText.length === 0 ? allRecipes : results;
+      results.length === 0 || searchedTag.length === 0 ? allRecipes : results;
 
     const resultsFromTag = results.filter((recipe) =>
-      recipe.containsText(searchedText, recipe[location])
+      recipe.containsText(searchedTag, recipe[location])
     );
 
     /*Refresh liste en fonction de tag */
     /*TODO*/
     searchAndUpdateResult(
-      searchedText,
+      searchedTag,
       resultsFromTag,
-      findTagIn(resultsFromTag, searchedText, select.toLowerCase())
+      findTagIn(resultsFromTag, searchedTag, selectType.toLowerCase()),
+      selectType.toLowerCase()
     );
   };
 
-  const onEnterTag = (e, input) => {
+  const onValidateTag = (e, input) => {
     if (e.code === "Enter") {
-      const inputName = input.getAttribute("name");
+      e.preventDefault();
+      const inputName = input.getAttribute("name") + "-tag";
+
       createTag(input.value, inputName).addEventListener("click", (e) =>
         closeTag(e)
       );
+    }
+    if (!e.code) {
+      createTag(
+        e.target.textContent,
+        e.target.getAttribute("id").replace(/[0-9]?[0-9]/, "tag")
+      ).addEventListener("click", (e) => closeTag(e));
     }
   };
 
@@ -130,8 +149,26 @@ const search = () => {
   };
 
   tagsInput.forEach((tagInput) => {
-    tagInput.addEventListener("input", (e) => onTagsSearch(e)),
-      tagInput.addEventListener("keydown", (e) => onEnterTag(e, tagInput));
+    tagInput.addEventListener("input", (e) => {
+      const searchedTag = e.target.value.toLowerCase();
+      const selectType = e.target.getAttribute("name");
+      onTagsSearch(searchedTag, selectType);
+    });
+    tagInput.addEventListener("keydown", (e) => {
+      if (e.code === "Enter") {
+        onValidateTag(e, tagInput);
+      }
+    });
+  });
+
+  document.querySelectorAll(".combo-list li").forEach((li) => {
+    li.addEventListener("click", (li) => {
+      onValidateTag(li);
+      onTagsSearch(
+        li.target.textContent,
+        li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "")
+      );
+    });
   });
 };
 
