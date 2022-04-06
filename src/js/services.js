@@ -12,7 +12,7 @@ import {
  * @param {Array} array
  * @param {string} item
  */
-const pushInArray = (array, item) => {
+const arrayNoDuplicates = (array, item) => {
   if (!array.includes(item)) {
     array.push(item);
   }
@@ -37,4 +37,4 @@ const initialState = () => {
   recipesUI();
 };
 
-export { pushInArray, initialState };
+export { arrayNoDuplicates, initialState };
