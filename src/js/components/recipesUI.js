@@ -63,9 +63,6 @@ const refreshUiRecipes = (searchedRecipes) => {
       recipe.description,
       "description"
     );
-    /*const description = document.createElement("div");
-    description.className = "description";
-    description.textContent = recipe.description;*/
 
     ingredientsAndDescriptionContainer.append(
       ingredientsContainer,
@@ -76,6 +73,7 @@ const refreshUiRecipes = (searchedRecipes) => {
     document.querySelector(".recettes").append(article);
   };
 
+  /**Create ingredient DOM element */
   const createIngredient = (element) => {
     const ingredient = domBuilder.domElement(
       "p",

@@ -138,14 +138,12 @@ const refreshUiRecipes = searchedRecipes => {
     const ingredientsContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", "", "ingredients-wrapper");
     recipe.ingredients.forEach(ingredient => ingredientsContainer.append(createIngredient(ingredient)));
     const description = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", recipe.description, "description");
-    /*const description = document.createElement("div");
-    description.className = "description";
-    description.textContent = recipe.description;*/
-
     ingredientsAndDescriptionContainer.append(ingredientsContainer, description);
     article.append(img, title, ingredientsAndDescriptionContainer);
     document.querySelector(".recettes").append(article);
   };
+  /**Create ingredient DOM element */
+
 
   const createIngredient = element => {
     const ingredient = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("p", element.ingredient + ": ", "ingredient");
@@ -1735,56 +1733,6 @@ const select = options => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
   const inputsCombo = document.querySelectorAll(".combo-lists input");
-  /*const options = document.querySelectorAll('[role=option]')*/
-
-  /**
-   * Set focus on an item. Class focus on item & aria-activedescendant on listbox
-   * @param {object} item
-   */
-
-  /*const focusItem = (item) => {
-    let focusedItem = document.querySelector('.focused')
-    if(focusedItem){
-      focusedItem.classList.remove('focused')
-    }
-     item.classList.add('focused')
-    listbox.setAttribute('aria-activedescendant', item.id)
-  }*/
-
-  /**
-   * Select a item and hide listbox
-   */
-
-  /* const selectItem = () => {
-    let focusedItem = document.querySelector('.focused')
-    button.textContent = focusedItem.textContent
-    hideList()
-  }*/
-
-  /**
-   * Add listener on keyboard
-   */
-
-  /* const keyEventsListener = () => {
-    listbox.addEventListener('keydown', keyEvents)
-  }*/
-
-  /* Add listener on focus list to trigger listener on keyboad */
-
-  /*listbox.addEventListener('focus', keyEventsListener)*/
-
-  /**
-   * Execute functions depending on keys pressed
-   * @param event
-   */
-
-  /*const keyEvents = e => {
-    e.preventDefault()
-     if(e.code === 'Enter' || e.code === 'Space'){
-      selectItem()
-    }
-  }*/
-
   /**
    * Show the list of options
    */
@@ -1816,9 +1764,6 @@ const select = options => {
     document.querySelector(".show .list-wrapper").classList.add("hidden");
     document.querySelector(".show .list-button").removeAttribute("aria-expanded");
     document.querySelector(".show").classList.remove("show");
-    /* document
-      .querySelectorAll(".combo-lists input")
-      .forEach((input) => (input.value = ""));*/
   };
 
   const hideList = e => {
@@ -1838,21 +1783,6 @@ const select = options => {
       }
     });
   });
-  /* Focus item and select on mouse click    */
-
-  /*const clickItem = e => {
-    focusItem(e)
-    selectItem()
-  }*/
-
-  /*Add listeners on options */
-
-  /* options.forEach(option =>  option.addEventListener("click", e => clickItem(e.target)))
-  options.forEach(option =>  option.addEventListener("keydown", e => {
-   if(e.code === 'Enter'){
-      clickItem(option)
-   }
-  }))*/
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (select);
@@ -1889,16 +1819,25 @@ const search = () => {
     elements.forEach(element => element.remove());
   };
   /**
-   * @param {string} searchedText
+   * @param {Array} searchedText
    */
 
 
   const searchAndUpdateResult = (searchedText, resultsFromTag, selectListFromTag, selectType) => {
-    results = resultsFromTag ? resultsFromTag : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes.filter(recipe => recipe.containsText(searchedText, recipe.initialSearch));
+    const resultsArrayFromMainSearch = searchTextArray => {
+      let searchIn = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+      searchTextArray.forEach(text => {
+        searchIn = searchIn.filter(recipe => recipe.containsText(text, recipe.initialSearch));
+      });
+      return searchIn;
+    };
+
+    results = resultsFromTag ? resultsFromTag : resultsArrayFromMainSearch(searchedText);
     selectMethods[selectType] = selectListFromTag;
     /*Actualisation de l'interfacce */
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(results);
+    console.log("end array", results);
     /*Actualisation des tags */
 
     (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
@@ -1931,9 +1870,9 @@ const search = () => {
   };
 
   const onSearch = e => {
-    const searchedText = e.target.value.toLowerCase();
+    const searchedText = e.target.value.toLowerCase().split(" ");
 
-    if (canSearch(searchedText)) {
+    if (canSearch(searchedText[0])) {
       cleanCurrentResult();
       searchAndUpdateResult(searchedText);
     }

@@ -25,7 +25,7 @@ const search = () => {
   };
 
   /**
-   * @param {string} searchedText
+   * @param {Array} searchedText
    */
   const searchAndUpdateResult = (
     searchedText,
@@ -33,11 +33,19 @@ const search = () => {
     selectListFromTag,
     selectType
   ) => {
+    const resultsArrayFromMainSearch = (searchTextArray) => {
+      let searchIn = allRecipes;
+      searchTextArray.forEach((text) => {
+        searchIn = searchIn.filter((recipe) =>
+          recipe.containsText(text, recipe.initialSearch)
+        );
+      });
+      return searchIn;
+    };
+
     results = resultsFromTag
       ? resultsFromTag
-      : allRecipes.filter((recipe) =>
-          recipe.containsText(searchedText, recipe.initialSearch)
-        );
+      : resultsArrayFromMainSearch(searchedText);
 
     selectMethods[selectType] = selectListFromTag;
 
@@ -83,8 +91,9 @@ const search = () => {
   };
 
   const onSearch = (e) => {
-    const searchedText = e.target.value.toLowerCase();
-    if (canSearch(searchedText)) {
+    const searchedText = e.target.value.toLowerCase().split(" ");
+
+    if (canSearch(searchedText[0])) {
       cleanCurrentResult();
       searchAndUpdateResult(searchedText);
     }
