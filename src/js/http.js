@@ -35,6 +35,13 @@ const findAppliances = (recipes) => {
   return appareils;
 };
 
+/**
+ * Return array of tags existing recipes location (ingredients, ustensiles or appareils)
+ * @param {Array} recipes
+ * @param {string} tag
+ * @param {string} location
+ * @returns
+ */
 const findTagIn = (recipes, tag, location) => {
   let tags = [];
   recipes.forEach((recipe) => {

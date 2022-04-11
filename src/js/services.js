@@ -8,7 +8,7 @@ import {
 } from "./http";
 
 /**
- *
+ * Push in array only if it does not already exist
  * @param {Array} array
  * @param {string} item
  */

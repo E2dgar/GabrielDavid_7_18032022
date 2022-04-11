@@ -1,10 +1,13 @@
 import { allRecipes } from "../http";
+import domBuilder from "../domBuilder";
 
 const refreshUiRecipes = (searchedRecipes) => {
+  /*On refresh UI, remove all articles */
   document.querySelectorAll("article").forEach((article) => article.remove());
 
   const data = searchedRecipes ?? allRecipes;
 
+  /*Display/hide 'no results' element----------*/
   const noResultsElement = document.querySelector(".no-results");
 
   if (data.length === 0) {
@@ -22,44 +25,63 @@ const refreshUiRecipes = (searchedRecipes) => {
   if (noResultsElement) {
     noResultsElement.remove();
   }
+  /*--------------------------------------------*/
 
+  /**
+   * Create card from a recipe
+   * @param {Object} recipe
+   */
   const createCard = (recipe) => {
     const article = document.createElement("article");
 
-    const img = document.createElement("div");
-    img.className = "img-container";
+    const img = domBuilder.domElement("div", "", "img-container");
 
-    const title = document.createElement("h2");
-    title.textContent = recipe.name;
+    const title = domBuilder.domElement("h2", recipe.name);
 
-    const recipeTime = document.createElement("span");
-    recipeTime.textContent = recipe.time + " min";
+    const recipeTime = domBuilder.domElement("span", recipe.time + " min");
+
     title.append(recipeTime);
 
-    const details = document.createElement("div");
-    details.className = "details";
-    const ingredientsWrapper = document.createElement("div");
-    ingredientsWrapper.className = "ingredients-wrapper";
-
-    recipe.ingredients.forEach((ingredient) =>
-      ingredientsWrapper.append(createIngredient(ingredient))
+    const ingredientsAndDescriptionContainer = domBuilder.domElement(
+      "div",
+      "",
+      "details"
     );
 
-    const description = document.createElement("div");
+    const ingredientsContainer = domBuilder.domElement(
+      "div",
+      "",
+      "ingredients-wrapper"
+    );
+
+    recipe.ingredients.forEach((ingredient) =>
+      ingredientsContainer.append(createIngredient(ingredient))
+    );
+
+    const description = domBuilder.domElement(
+      "div",
+      recipe.description,
+      "description"
+    );
+    /*const description = document.createElement("div");
     description.className = "description";
-    description.textContent = recipe.description;
+    description.textContent = recipe.description;*/
 
-    details.append(ingredientsWrapper, description);
+    ingredientsAndDescriptionContainer.append(
+      ingredientsContainer,
+      description
+    );
 
-    article.append(img, title, details);
+    article.append(img, title, ingredientsAndDescriptionContainer);
     document.querySelector(".recettes").append(article);
   };
 
   const createIngredient = (element) => {
-    const DOMElement = document.createElement("p");
-    DOMElement.className = "ingredient";
-
-    DOMElement.textContent = element.ingredient + ": ";
+    const ingredient = domBuilder.domElement(
+      "p",
+      element.ingredient + ": ",
+      "ingredient"
+    );
 
     const quantity = document.createElement("span");
     if (element.unit) {
@@ -67,14 +89,13 @@ const refreshUiRecipes = (searchedRecipes) => {
       if (element.unit === "ml" || element.unit === "cl") {
         unit = element.unit;
       }
-
       quantity.innerHTML = `${element.quantity + unit}`;
     } else {
       quantity.textContent = element.quantity;
     }
-    DOMElement.append(quantity);
+    ingredient.append(quantity);
 
-    return DOMElement;
+    return ingredient;
   };
 
   data.forEach((recipe) => createCard(recipe));

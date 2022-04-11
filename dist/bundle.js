@@ -25,7 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- *
+ * Push in array only if it does not already exist
  * @param {Array} array
  * @param {string} item
  */
@@ -93,11 +93,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _domBuilder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
+
 
 
 const refreshUiRecipes = searchedRecipes => {
+  /*On refresh UI, remove all articles */
   document.querySelectorAll("article").forEach(article => article.remove());
   const data = searchedRecipes ?? _http__WEBPACK_IMPORTED_MODULE_0__.allRecipes;
+  /*Display/hide 'no results' element----------*/
+
   const noResultsElement = document.querySelector(".no-results");
 
   if (data.length === 0) {
@@ -115,33 +120,35 @@ const refreshUiRecipes = searchedRecipes => {
   if (noResultsElement) {
     noResultsElement.remove();
   }
+  /*--------------------------------------------*/
+
+  /**
+   * Create card from a recipe
+   * @param {Object} recipe
+   */
+
 
   const createCard = recipe => {
     const article = document.createElement("article");
-    const img = document.createElement("div");
-    img.className = "img-container";
-    const title = document.createElement("h2");
-    title.textContent = recipe.name;
-    const recipeTime = document.createElement("span");
-    recipeTime.textContent = recipe.time + " min";
+    const img = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", "", "img-container");
+    const title = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("h2", recipe.name);
+    const recipeTime = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("span", recipe.time + " min");
     title.append(recipeTime);
-    const details = document.createElement("div");
-    details.className = "details";
-    const ingredientsWrapper = document.createElement("div");
-    ingredientsWrapper.className = "ingredients-wrapper";
-    recipe.ingredients.forEach(ingredient => ingredientsWrapper.append(createIngredient(ingredient)));
-    const description = document.createElement("div");
+    const ingredientsAndDescriptionContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", "", "details");
+    const ingredientsContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", "", "ingredients-wrapper");
+    recipe.ingredients.forEach(ingredient => ingredientsContainer.append(createIngredient(ingredient)));
+    const description = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", recipe.description, "description");
+    /*const description = document.createElement("div");
     description.className = "description";
-    description.textContent = recipe.description;
-    details.append(ingredientsWrapper, description);
-    article.append(img, title, details);
+    description.textContent = recipe.description;*/
+
+    ingredientsAndDescriptionContainer.append(ingredientsContainer, description);
+    article.append(img, title, ingredientsAndDescriptionContainer);
     document.querySelector(".recettes").append(article);
   };
 
   const createIngredient = element => {
-    const DOMElement = document.createElement("p");
-    DOMElement.className = "ingredient";
-    DOMElement.textContent = element.ingredient + ": ";
+    const ingredient = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("p", element.ingredient + ": ", "ingredient");
     const quantity = document.createElement("span");
 
     if (element.unit) {
@@ -156,8 +163,8 @@ const refreshUiRecipes = searchedRecipes => {
       quantity.textContent = element.quantity;
     }
 
-    DOMElement.append(quantity);
-    return DOMElement;
+    ingredient.append(quantity);
+    return ingredient;
   };
 
   data.forEach(recipe => createCard(recipe));
@@ -215,6 +222,14 @@ const findAppliances = recipes => {
   });
   return appareils;
 };
+/**
+ * Return array of tags existing recipes location (ingredients, ustensiles or appareils)
+ * @param {Array} recipes
+ * @param {string} tag
+ * @param {string} location
+ * @returns
+ */
+
 
 const findTagIn = (recipes, tag, location) => {
   let tags = [];
@@ -1683,6 +1698,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+const domBuilder = {
+  domElement:
+  /**
+   * Create DOM element and insert textContent
+   * @param {string} element
+   * @param {string || null}  textContent
+   * @param {string || null} className
+   * @returns
+   */
+  (element, textContent, className) => {
+    const domElement = document.createElement(element);
+
+    if (textContent) {
+      domElement.textContent = textContent;
+    }
+
+    if (className) {
+      domElement.className = className;
+    }
+
+    return domElement;
+  }
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (domBuilder);
+
+/***/ }),
+/* 9 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
 const select = options => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
@@ -1810,7 +1858,7 @@ const select = options => {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (select);
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1820,7 +1868,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
-/* harmony import */ var _components_tag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+/* harmony import */ var _components_tag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
 /* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2);
 
 
@@ -1951,7 +1999,7 @@ const search = () => {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -2037,8 +2085,8 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_main_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _components_filterSelect_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9);
+/* harmony import */ var _components_filterSelect_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9);
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
 
 
 
