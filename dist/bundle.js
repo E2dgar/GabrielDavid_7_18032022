@@ -1865,7 +1865,7 @@ const search = () => {
   };
 
   const reset = searchedText => {
-    return !searchedText;
+    return searchedText[0] === "";
   };
 
   const onSearch = e => {
