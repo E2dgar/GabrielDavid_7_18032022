@@ -1837,7 +1837,6 @@ const search = () => {
     /*Actualisation de l'interfacce */
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(results);
-    console.log("end array", results);
     /*Actualisation des tags */
 
     (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_2__["default"])([{
