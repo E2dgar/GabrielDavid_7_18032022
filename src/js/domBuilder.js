@@ -1,22 +1,15 @@
 const domBuilder = {
-  domElement:
-    /**
-     * Create DOM element and insert textContent
-     * @param {string} element
-     * @param {string || null}  textContent
-     * @param {string || null} className
-     * @returns
-     */
-    (element, textContent, className) => {
-      const domElement = document.createElement(element);
-      if (textContent) {
-        domElement.textContent = textContent;
-      }
-      if (className) {
-        domElement.className = className;
-      }
-      return domElement;
-    },
+  wrapper: (tag, className) => {
+    const domElement = document.createElement(tag);
+    domElement.className = className;
+
+    return domElement;
+  },
+  elementWithContent: (tag, content) => {
+    const domElement = document.createElement(tag);
+    domElement.textContent = content;
+    return domElement;
+  },
 };
 
 export default domBuilder;

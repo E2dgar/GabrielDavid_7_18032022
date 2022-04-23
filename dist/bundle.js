@@ -130,14 +130,15 @@ const refreshUiRecipes = searchedRecipes => {
 
   const createCard = recipe => {
     const article = document.createElement("article");
-    const img = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", "", "img-container");
-    const title = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("h2", recipe.name);
-    const recipeTime = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("span", recipe.time + " min");
+    const img = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "img-container");
+    const title = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("h2", recipe.name);
+    const recipeTime = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("span", recipe.time + " min");
     title.append(recipeTime);
-    const ingredientsAndDescriptionContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", "", "details");
-    const ingredientsContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", "", "ingredients-wrapper");
+    const ingredientsAndDescriptionContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "details");
+    const ingredientsContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "ingredients-wrapper");
     recipe.ingredients.forEach(ingredient => ingredientsContainer.append(createIngredient(ingredient)));
-    const description = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("div", recipe.description, "description");
+    const description = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("div", recipe.description);
+    description.classList.add("description");
     ingredientsAndDescriptionContainer.append(ingredientsContainer, description);
     article.append(img, title, ingredientsAndDescriptionContainer);
     document.querySelector(".recettes").append(article);
@@ -146,7 +147,8 @@ const refreshUiRecipes = searchedRecipes => {
 
 
   const createIngredient = element => {
-    const ingredient = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].domElement("p", element.ingredient + ": ", "ingredient");
+    const ingredient = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("p", element.ingredient + ": ");
+    ingredient.className = "ingredient";
     const quantity = document.createElement("span");
 
     if (element.unit) {
@@ -1697,25 +1699,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const domBuilder = {
-  domElement:
-  /**
-   * Create DOM element and insert textContent
-   * @param {string} element
-   * @param {string || null}  textContent
-   * @param {string || null} className
-   * @returns
-   */
-  (element, textContent, className) => {
-    const domElement = document.createElement(element);
-
-    if (textContent) {
-      domElement.textContent = textContent;
-    }
-
-    if (className) {
-      domElement.className = className;
-    }
-
+  wrapper: (tag, className) => {
+    const domElement = document.createElement(tag);
+    domElement.className = className;
+    return domElement;
+  },
+  elementWithContent: (tag, content) => {
+    const domElement = document.createElement(tag);
+    domElement.textContent = content;
     return domElement;
   }
 };
