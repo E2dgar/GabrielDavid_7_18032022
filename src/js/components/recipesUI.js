@@ -34,23 +34,24 @@ const refreshUiRecipes = (searchedRecipes) => {
   const createCard = (recipe) => {
     const article = document.createElement("article");
 
-    const img = domBuilder.domElement("div", "", "img-container");
+    const img = domBuilder.wrapper("div", "img-container");
 
-    const title = domBuilder.domElement("h2", recipe.name);
+    const title = domBuilder.elementWithContent("h2", recipe.name);
 
-    const recipeTime = domBuilder.domElement("span", recipe.time + " min");
+    const recipeTime = domBuilder.elementWithContent(
+      "span",
+      recipe.time + " min"
+    );
 
     title.append(recipeTime);
 
-    const ingredientsAndDescriptionContainer = domBuilder.domElement(
+    const ingredientsAndDescriptionContainer = domBuilder.wrapper(
       "div",
-      "",
       "details"
     );
 
-    const ingredientsContainer = domBuilder.domElement(
+    const ingredientsContainer = domBuilder.wrapper(
       "div",
-      "",
       "ingredients-wrapper"
     );
 
@@ -58,11 +59,11 @@ const refreshUiRecipes = (searchedRecipes) => {
       ingredientsContainer.append(createIngredient(ingredient))
     );
 
-    const description = domBuilder.domElement(
+    const description = domBuilder.elementWithContent(
       "div",
-      recipe.description,
-      "description"
+      recipe.description
     );
+    description.classList.add("description");
 
     ingredientsAndDescriptionContainer.append(
       ingredientsContainer,
@@ -75,11 +76,11 @@ const refreshUiRecipes = (searchedRecipes) => {
 
   /**Create ingredient DOM element */
   const createIngredient = (element) => {
-    const ingredient = domBuilder.domElement(
+    const ingredient = domBuilder.elementWithContent(
       "p",
-      element.ingredient + ": ",
-      "ingredient"
+      element.ingredient + ": "
     );
+    ingredient.className = "ingredient";
 
     const quantity = document.createElement("span");
     if (element.unit) {
