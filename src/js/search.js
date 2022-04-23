@@ -116,7 +116,13 @@ const search = () => {
       "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
 
     results =
-      results.length === 0 || searchedTag.length === 0 ? allRecipes : results;
+      results.length === 0 ||
+      (searchedTag.length === 0 &&
+        document.querySelectorAll(`.${selectType}-tag`).length === 0)
+        ? allRecipes
+        : results;
+
+    console.log("search resu", document.querySelectorAll(`.${selectType}-tag`));
 
     const resultsFromTag = results.filter((recipe) =>
       recipe.containsText(searchedTag, recipe[location])
@@ -152,7 +158,7 @@ const search = () => {
   /**On close tag */
   const closeTag = (e) => {
     document
-      .querySelector(`.${e.currentTarget.getAttribute("data-tag")}`)
+      .querySelector(`.tag-${e.currentTarget.getAttribute("data-tag")}`)
       .remove();
     /*Update results TODO */
   };

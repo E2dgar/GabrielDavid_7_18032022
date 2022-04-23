@@ -1877,7 +1877,8 @@ const search = () => {
 
   const onTagsSearch = (searchedTag, selectType) => {
     let location = "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
-    results = results.length === 0 || searchedTag.length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : results;
+    results = results.length === 0 || searchedTag.length === 0 && document.querySelectorAll(`.${selectType}-tag`).length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : results;
+    console.log("search resu", document.querySelectorAll(`.${selectType}-tag`));
     const resultsFromTag = results.filter(recipe => recipe.containsText(searchedTag, recipe[location]));
     /*Refresh liste en fonction de tag */
 
@@ -1901,7 +1902,7 @@ const search = () => {
 
 
   const closeTag = e => {
-    document.querySelector(`.${e.currentTarget.getAttribute("data-tag")}`).remove();
+    document.querySelector(`.tag-${e.currentTarget.getAttribute("data-tag")}`).remove();
     /*Update results TODO */
   };
 
@@ -1938,12 +1939,12 @@ __webpack_require__.r(__webpack_exports__);
 const createTag = (textTag, tagType) => {
   const tagsContainer = document.querySelector(".tags");
   const box = document.createElement("div");
-  box.className = `tag ${tagType}`;
+  box.className = `tag ${tagType} tag-${textTag}`;
   const content = document.createElement("span");
   content.textContent = textTag;
   const closeTag = document.createElement("button");
   closeTag.className = "close-tag";
-  closeTag.setAttribute("data-tag", `${tagType}`);
+  closeTag.setAttribute("data-tag", `${textTag}`);
   box.append(content, closeTag);
   tagsContainer.append(box);
   return closeTag;
