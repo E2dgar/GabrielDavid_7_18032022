@@ -122,8 +122,6 @@ const search = () => {
         ? allRecipes
         : results;
 
-    console.log("search resu", document.querySelectorAll(`.${selectType}-tag`));
-
     const resultsFromTag = results.filter((recipe) =>
       recipe.containsText(searchedTag, recipe[location])
     );
