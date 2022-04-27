@@ -73,7 +73,8 @@ const search = () => {
           : findUstensils(results),
       },
     ]);
-    /*TODO*/
+
+    addClickListenerOnList();
   };
 
   /*Remove recipes from UI */
@@ -174,15 +175,20 @@ const search = () => {
     });
   });
 
-  document.querySelectorAll(".combo-list li").forEach((li) => {
-    li.addEventListener("click", (li) => {
-      onValidateTag(li);
-      onTagsSearch(
-        li.target.textContent,
-        li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "")
-      );
+  const addClickListenerOnList = () => {
+    document.querySelectorAll(".combo-list li").forEach((li) => {
+      li.addEventListener("click", (li) => {
+        console.log("click");
+        onValidateTag(li);
+        onTagsSearch(
+          li.target.textContent,
+          li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "")
+        );
+      });
     });
-  });
+  };
+
+  addClickListenerOnList();
 };
 
 export default search;

@@ -1840,7 +1840,7 @@ const search = () => {
       name: "ustensiles",
       list: selectMethods["ustensiles"] ? selectListFromTag : (0,_http__WEBPACK_IMPORTED_MODULE_1__.findUstensils)(results)
     }]);
-    /*TODO*/
+    addClickListenerOnList();
   };
   /*Remove recipes from UI */
 
@@ -1878,7 +1878,6 @@ const search = () => {
   const onTagsSearch = (searchedTag, selectType) => {
     let location = "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
     results = results.length === 0 || searchedTag.length === 0 && document.querySelectorAll(`.${selectType}-tag`).length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : results;
-    console.log("search resu", document.querySelectorAll(`.${selectType}-tag`));
     const resultsFromTag = results.filter(recipe => recipe.containsText(searchedTag, recipe[location]));
     /*Refresh liste en fonction de tag */
 
@@ -1918,12 +1917,18 @@ const search = () => {
       }
     });
   });
-  document.querySelectorAll(".combo-list li").forEach(li => {
-    li.addEventListener("click", li => {
-      onValidateTag(li);
-      onTagsSearch(li.target.textContent, li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, ""));
+
+  const addClickListenerOnList = () => {
+    document.querySelectorAll(".combo-list li").forEach(li => {
+      li.addEventListener("click", li => {
+        console.log("click");
+        onValidateTag(li);
+        onTagsSearch(li.target.textContent, li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, ""));
+      });
     });
-  });
+  };
+
+  addClickListenerOnList();
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
