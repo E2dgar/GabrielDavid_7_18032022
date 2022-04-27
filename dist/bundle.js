@@ -1817,11 +1817,21 @@ const mainSearch = () => {
      */
     let searchIn = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
 
-    const findRecipes = searchTextArray => {
-      searchTextArray.forEach(text => {
-        /*On update searchIn pour ne chercher que dans les résultats déjà filtrés quand il y a plusieurs termes de recherche*/
-        searchIn = searchIn.filter(recipe => recipe.containsText(text, recipe.initialSearch));
-      });
+    const findRecipes = searchedText => {
+      for (let i = 0; i < searchedText.length; i++) {
+        for (let j = 0; j < searchIn.length + 1; j++) {
+          if (searchIn[j].name.includes(searchedText)) {
+            output.push(searchIn[j]);
+          } else if (searchIn[j].description.includes(searchedText)) {
+            output.push(searchIn[j]);
+          } else if ([...searchIn[j].ingredients.map(ing => ing.ingredient)].includes(searchedText)) {
+            output.push(searchIn[j]);
+          }
+
+          searchIn = output;
+        }
+      }
+
       return searchIn;
     };
     /*Actualisation de l'interfacce */
