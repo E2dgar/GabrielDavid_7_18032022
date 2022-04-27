@@ -1,10 +1,10 @@
 import "../scss/main.scss";
 import { initialState } from "./services";
 import select from "./components/filterSelect/select";
-import search from "./search";
+import mainSearch from "./mainSearch";
 
 initialState();
 
 select();
 
-search();
+mainSearch();

@@ -10,6 +10,9 @@ const domBuilder = {
     domElement.textContent = content;
     return domElement;
   },
+  removeElements: (elements) => {
+    elements.forEach((element) => element.remove());
+  },
 };
 
 export default domBuilder;

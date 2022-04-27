@@ -1,6 +1,11 @@
 import { allRecipes } from "../http";
 import domBuilder from "../domBuilder";
 
+/**
+ * Met à jour l'UI en fonction du tableau de recettes passé
+ * @param {Array} searchedRecipes
+ * @returns
+ */
 const refreshUiRecipes = (searchedRecipes) => {
   /*On refresh UI, remove all articles */
   document.querySelectorAll("article").forEach((article) => article.remove());
