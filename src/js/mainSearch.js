@@ -32,7 +32,7 @@ const mainSearch = () => {
           ) {
             output.push(searchIn[j]);
           }
-
+          /*On update searchIn pour ne chercher que dans les résultats déjà filtrés quand il y a plusieurs termes de recherche*/
           searchIn = output;
         }
       }
