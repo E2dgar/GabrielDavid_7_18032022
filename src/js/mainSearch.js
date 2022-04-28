@@ -36,6 +36,7 @@ const mainSearch = () => {
     updateAllSelects(findRecipesByMain(searchedText));
   };
 
+  /*Check si il ya des tags de recherche affichés*/
   const isTag = () => {
     if (
       allTags.ingredients.length > 0 ||
@@ -46,26 +47,33 @@ const mainSearch = () => {
     }
   };
 
+  /*Return un array de recipes filtré avec la recherche principale */
   const findRecipesByMain = (searchedText) => {
     let recipes = [];
     let resultsFromMain = [];
 
+    /*Si il y a des tags on prend comme tableau de recherches les recettes déjà filtrés par un ou des tags */
     if (isTag()) {
       recipes = findRecipesByTags();
-    } else {
+    } /*Sinon on prend toutes les recettes */ else {
       recipes = allRecipes;
     }
 
+    /*On boucle sur la liste recipes */
     for (let i = 0; i < recipes.length; i++) {
       let allTerms = new Array(searchedText.length);
 
+      /*On boucle sur un tableau de termes gérer une recherche à plusieurs termes */
       for (let j = 0; j < searchedText.length; j++) {
+        /*Si le terme[j] est présent dans le nom de la recette on le passe à true */
         if (recipes[i].name.toLowerCase().includes(searchedText[j])) {
           allTerms[j] = true;
         }
+        /*Si le terme[j] est présent dans la description on le passe à true */
         if (recipes[i].description.toLowerCase().includes(searchedText[j])) {
           allTerms[j] = true;
         }
+        /*Si le terme[j] est présent dans la liste des ingrédients de la recette on le passe à true */
         for (let k = 0; k < recipes[i].ingredients.length; k++) {
           if (
             recipes[i].ingredients[k].ingredient
@@ -77,12 +85,14 @@ const mainSearch = () => {
         }
       }
 
+      /*On compte le nombre de terms égal à true */
       let countPresentTerm = 0;
       for (let k = 0; k < allTerms.length; k++) {
         if (allTerms[k]) {
           countPresentTerm++;
         }
       }
+      /*Si le nombre de true est égal aux nombres de termes recherchés on peut ajouter la recette au résultats*/
       if (allTerms.length === countPresentTerm) {
         arrayNoDuplicates(resultsFromMain, recipes[i]);
       }
@@ -111,8 +121,7 @@ const mainSearch = () => {
     }
 
     if (reset(searchedText)) {
-      currentTags();
-      if (isTagd()) {
+      if (isTag()) {
         findRecipesByTags();
       } else {
         initialState();
@@ -123,12 +132,13 @@ const mainSearch = () => {
   inputMain.addEventListener("input", (e) => onSearch(e));
 
   /*Recherche par tag */
-  const tagsInput = [
-    document.querySelector("[name='ingredients']"),
-    document.querySelector("[name='ustensiles']"),
-    document.querySelector("[name='appareils']"),
-  ];
+ 
 
+  /**
+   * Filtre la liste des select suivant les termes recherchés
+   * @param {Array} searchedTag
+   * @param {string} selectType
+   */
   const onTagsSearch = (searchedTag, selectType) => {
     const currentResults = mainResults.length === 0 ? allRecipes : mainResults;
     let ingredientsList = selects.ingredients(currentResults);
@@ -152,6 +162,7 @@ const mainSearch = () => {
     };
 
     let updatedList = [];
+    /*Suivant le select dans lequel on est on filtre la liste en fonction des termes recherchés */
     switch (selectType) {
       case "ingredients":
         getTagsInSelect(ingredientsList);
@@ -169,17 +180,6 @@ const mainSearch = () => {
     updateSelect(selectType, updatedList);
   };
 
-  const currentTags = () => {
-    document
-      .querySelectorAll(".ingredients-tag span")
-      .forEach((span) => ingredientsTags.push(span.textContent));
-    document
-      .querySelectorAll(".appareils-tag span")
-      .forEach((span) => appareilsTags.push(span.textContent));
-    document
-      .querySelectorAll(".ustensiles-tag span")
-      .forEach((span) => ustensilesTags.push(span.textContent));
-  };
 
   /**
    * Update all selects from an array of recipes
@@ -193,16 +193,17 @@ const mainSearch = () => {
 
   const findRecipesByTags = () => {
     let recipes = [];
+    /*Si on a déjà une recherche principale effectuée, recipes est le résultat de cette recherche*/
     if (inputMain.value !== "") {
       recipes = mainResults;
-    } else {
-      console.log("there");
+    }/*Sinon recipes contient toutes les recettes*/ 
+    else {
       recipes = allRecipes;
     }
 
     let filteredFromTags = recipes;
-    /* currentTags();*/
-    console.log("tags", recipes);
+   
+    /*On filtre les résultats avec les tags présents */ 
     if (allTags.ingredients.length > 0) {
       allTags.ingredients.forEach((tag) => {
         filteredFromTags = filteredFromTags.filter((recipe) =>
@@ -235,11 +236,14 @@ const mainSearch = () => {
         );
       });
     }
+    /*On update l'UI (recettes)  et les listes des selects*/
     refreshUiRecipes(filteredFromTags);
     updateAllSelects(filteredFromTags);
+
     return filteredFromTags;
   };
 
+  /*Déclenche la recherche par tag quand un tag est validé */
   const onValidateTag = (e, input) => {
     if (e.code === "Enter") {
       e.preventDefault();
@@ -264,6 +268,7 @@ const mainSearch = () => {
     findRecipesByTags();
   };
 
+  /*A la fermeture d'un tag on supprime le tag de l'interface et du tableau des tags et on update les listes des selects */
   const closeTag = (e) => {
     const select = e.currentTarget.getAttribute("data-select");
     const tag = e.currentTarget.getAttribute("data-tag");
@@ -273,16 +278,19 @@ const mainSearch = () => {
 
     updateAllSelects(findRecipesByTags());
 
-    /*On refresh l'UI avec les derniers résultats moins le tag supprimé */
     if (isTag()) {
-      console.log("isTag");
       findRecipesByTags();
     } else if (inputMain.value !== "") {
-      console.log("isMain");
       searchAndUpdateResult(inputMain.value.toLowerCase().split(" "));
-    } else {
-    }
+    } 
   };
+
+  /*Ecouteurs sur les input de tags */
+  const tagsInput = [
+    document.querySelector("[name='ingredients']"),
+    document.querySelector("[name='ustensiles']"),
+    document.querySelector("[name='appareils']"),
+  ];
 
   tagsInput.forEach((tagInput) => {
     tagInput.addEventListener("input", (e) => {

@@ -1831,34 +1831,49 @@ const mainSearch = () => {
 
     updateAllSelects(findRecipesByMain(searchedText));
   };
+  /*Check si il ya des tags de recherche affichés*/
+
 
   const isTag = () => {
     if (allTags.ingredients.length > 0 || allTags.appareils.length > 0 || allTags.ustensiles.length > 0) {
       return true;
     }
   };
+  /*Return un array de recipes filtré avec la recherche principale */
+
 
   const findRecipesByMain = searchedText => {
     let recipes = [];
     let resultsFromMain = [];
+    /*Si il y a des tags on prend comme tableau de recherches les recettes déjà filtrés par un ou des tags */
 
     if (isTag()) {
       recipes = findRecipesByTags();
-    } else {
+    }
+    /*Sinon on prend toutes les recettes */
+    else {
       recipes = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
     }
+    /*On boucle sur la liste recipes */
+
 
     for (let i = 0; i < recipes.length; i++) {
       let allTerms = new Array(searchedText.length);
+      /*On boucle sur un tableau de termes gérer une recherche à plusieurs termes */
 
       for (let j = 0; j < searchedText.length; j++) {
+        /*Si le terme[j] est présent dans le nom de la recette on le passe à true */
         if (recipes[i].name.toLowerCase().includes(searchedText[j])) {
           allTerms[j] = true;
         }
+        /*Si le terme[j] est présent dans la description on le passe à true */
+
 
         if (recipes[i].description.toLowerCase().includes(searchedText[j])) {
           allTerms[j] = true;
         }
+        /*Si le terme[j] est présent dans la liste des ingrédients de la recette on le passe à true */
+
 
         for (let k = 0; k < recipes[i].ingredients.length; k++) {
           if (recipes[i].ingredients[k].ingredient.toLowerCase().includes(searchedText[j])) {
@@ -1866,6 +1881,8 @@ const mainSearch = () => {
           }
         }
       }
+      /*On compte le nombre de terms égal à true */
+
 
       let countPresentTerm = 0;
 
@@ -1874,6 +1891,8 @@ const mainSearch = () => {
           countPresentTerm++;
         }
       }
+      /*Si le nombre de true est égal aux nombres de termes recherchés on peut ajouter la recette au résultats*/
+
 
       if (allTerms.length === countPresentTerm) {
         (0,_services__WEBPACK_IMPORTED_MODULE_2__.arrayNoDuplicates)(resultsFromMain, recipes[i]);
@@ -1905,9 +1924,8 @@ const mainSearch = () => {
     }
 
     if (reset(searchedText)) {
-      currentTags();
-
-      if (isTagd()) {
+      /*currentTags();*/
+      if (isTag()) {
         findRecipesByTags();
       } else {
         (0,_services__WEBPACK_IMPORTED_MODULE_2__.initialState)();
@@ -1919,6 +1937,11 @@ const mainSearch = () => {
   /*Recherche par tag */
 
   const tagsInput = [document.querySelector("[name='ingredients']"), document.querySelector("[name='ustensiles']"), document.querySelector("[name='appareils']")];
+  /**
+   * Filtre la liste des select suivant les termes recherchés
+   * @param {Array} searchedTag
+   * @param {string} selectType
+   */
 
   const onTagsSearch = (searchedTag, selectType) => {
     const currentResults = mainResults.length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : mainResults;
@@ -1944,6 +1967,7 @@ const mainSearch = () => {
     };
 
     let updatedList = [];
+    /*Suivant le select dans lequel on est on filtre la liste en fonction des termes recherchés */
 
     switch (selectType) {
       case "ingredients":
@@ -1964,12 +1988,18 @@ const mainSearch = () => {
 
     (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__["default"])(selectType, updatedList);
   };
+  /*const currentTags = () => {
+    document
+      .querySelectorAll(".ingredients-tag span")
+      .forEach((span) => ingredientsTags.push(span.textContent));
+    document
+      .querySelectorAll(".appareils-tag span")
+      .forEach((span) => appareilsTags.push(span.textContent));
+    document
+      .querySelectorAll(".ustensiles-tag span")
+      .forEach((span) => ustensilesTags.push(span.textContent));
+  };*/
 
-  const currentTags = () => {
-    document.querySelectorAll(".ingredients-tag span").forEach(span => ingredientsTags.push(span.textContent));
-    document.querySelectorAll(".appareils-tag span").forEach(span => appareilsTags.push(span.textContent));
-    document.querySelectorAll(".ustensiles-tag span").forEach(span => ustensilesTags.push(span.textContent));
-  };
   /**
    * Update all selects from an array of recipes
    * @param {Array} results
