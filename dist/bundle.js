@@ -1798,6 +1798,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
 /* harmony import */ var _domBuilder__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
+/* harmony import */ var _components_tag__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
+
 
 
 
@@ -1805,6 +1807,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const mainSearch = () => {
   const input = document.querySelector("[name='q']");
+  let results = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
   /**
    * @param {Array} searchedText
    */
@@ -1815,24 +1818,42 @@ const mainSearch = () => {
      * @param {Array} searchTextArray
      * @returns {Array} results
      */
-    let searchIn = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+    let output = [];
 
     const findRecipes = searchedText => {
-      for (let i = 0; i < searchedText.length; i++) {
-        for (let j = 0; j < searchIn.length + 1; j++) {
-          if (searchIn[j].name.includes(searchedText)) {
-            output.push(searchIn[j]);
-          } else if (searchIn[j].description.includes(searchedText)) {
-            output.push(searchIn[j]);
-          } else if ([...searchIn[j].ingredients.map(ing => ing.ingredient)].includes(searchedText)) {
-            output.push(searchIn[j]);
+      for (let i = 0; i < results.length; i++) {
+        let isInName = new Array(searchedText.length);
+        let countInName = 0;
+        let isInDesc = new Array(searchedText.length);
+        let countInDesc = 0;
+        let isInIngredients = new Array(searchedText.length);
+        let countInIngredients = 0;
+
+        for (let j = 0; j < searchedText.length; j++) {
+          if (results[i].name.toLowerCase().includes(searchedText[j])) {
+            isInName[j] = true;
+            countInName++;
           }
 
-          searchIn = output;
+          if (results[i].description.toLowerCase().includes(searchedText[j])) {
+            isInDesc[j] = true;
+            countInDesc++;
+          }
+
+          for (let k = 0; k < results[i].ingredients.length; k++) {
+            if (results[i].ingredients[k].ingredient.toLowerCase().includes(searchedText[j])) {
+              isInIngredients[j] = true;
+              countInIngredients++;
+            }
+          }
+        }
+
+        if (isInName.length === countInName || isInDesc.length === countInDesc || isInIngredients.length === countInIngredients) {
+          (0,_services__WEBPACK_IMPORTED_MODULE_2__.arrayNoDuplicates)(output, results[i]);
         }
       }
 
-      return searchIn;
+      return output;
     };
     /*Actualisation de l'interfacce */
 
@@ -1867,9 +1888,69 @@ const mainSearch = () => {
   };
 
   input.addEventListener("input", e => onSearch(e));
+  /*Recherche par tag */
+
+  const tagsInput = [document.querySelector("[name='ingredients']"), document.querySelector("[name='ustensiles']"), document.querySelector("[name='appareils']")];
+
+  const onTagsSearch = (searchedTag, selectType) => {
+    let location = "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
+    results = results.filter(recipe => recipe.containsText(searchedTag, recipe[location]));
+    /*Actualisation de l'interfacce */
+
+    (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(results);
+  };
+
+  const onValidateTag = (e, input) => {
+    if (e.code === "Enter") {
+      e.preventDefault();
+      const inputName = input.getAttribute("name") + "-tag";
+      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(input.value, inputName).addEventListener("click", e => closeTag(e));
+    }
+
+    if (!e.code) {
+      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(e.target.textContent, e.target.getAttribute("id").replace(/[0-9]?[0-9]/, "tag")).addEventListener("click", e => closeTag(e));
+    }
+  };
+
+  tagsInput.forEach(tagInput => {
+    tagInput.addEventListener("input", e => {
+      const searchedTag = e.target.value.toLowerCase().split(" ");
+      const selectType = e.target.getAttribute("name");
+      onTagsSearch(searchedTag, selectType);
+    });
+    tagInput.addEventListener("keydown", e => {
+      if (e.code === "Enter") {
+        onValidateTag(e, tagInput);
+      }
+    });
+  });
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (mainSearch);
+
+/***/ }),
+/* 11 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const createTag = (textTag, tagType) => {
+  const tagsContainer = document.querySelector(".tags");
+  const box = document.createElement("div");
+  box.className = `tag ${tagType} tag-${textTag}`;
+  const content = document.createElement("span");
+  content.textContent = textTag;
+  const closeTag = document.createElement("button");
+  closeTag.className = "close-tag";
+  closeTag.setAttribute("data-tag", `${textTag}`);
+  box.append(content, closeTag);
+  tagsContainer.append(box);
+  return closeTag;
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (createTag);
 
 /***/ })
 /******/ 	]);

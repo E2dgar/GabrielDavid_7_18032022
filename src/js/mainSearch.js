@@ -1,10 +1,13 @@
 import refreshUiRecipes from "./components/recipesUI";
 import { allRecipes } from "./http";
-import { initialState } from "./services";
+import { arrayNoDuplicates, initialState } from "./services";
 import domBuilder from "./domBuilder";
+import createTag from "./components/tag";
 
 const mainSearch = () => {
   const input = document.querySelector("[name='q']");
+
+  let results = allRecipes;
 
   /**
    * @param {Array} searchedText
@@ -16,27 +19,50 @@ const mainSearch = () => {
      * @returns {Array} results
      */
 
-    let searchIn = allRecipes;
+    let output = [];
 
     const findRecipes = (searchedText) => {
-      for (let i = 0; i < searchedText.length; i++) {
-        for (let j = 0; j < searchIn.length + 1; j++) {
-          if (searchIn[j].name.includes(searchedText)) {
-            output.push(searchIn[j]);
-          } else if (searchIn[j].description.includes(searchedText)) {
-            output.push(searchIn[j]);
-          } else if (
-            [...searchIn[j].ingredients.map((ing) => ing.ingredient)].includes(
-              searchedText
-            )
-          ) {
-            output.push(searchIn[j]);
+      for (let i = 0; i < results.length; i++) {
+        let isInName = new Array(searchedText.length);
+        let countInName = 0;
+
+        let isInDesc = new Array(searchedText.length);
+        let countInDesc = 0;
+
+        let isInIngredients = new Array(searchedText.length);
+        let countInIngredients = 0;
+
+        for (let j = 0; j < searchedText.length; j++) {
+          if (results[i].name.toLowerCase().includes(searchedText[j])) {
+            isInName[j] = true;
+            countInName++;
           }
-          /*On update searchIn pour ne chercher que dans les résultats déjà filtrés quand il y a plusieurs termes de recherche*/
-          searchIn = output;
+          if (results[i].description.toLowerCase().includes(searchedText[j])) {
+            isInDesc[j] = true;
+            countInDesc++;
+          }
+          for (let k = 0; k < results[i].ingredients.length; k++) {
+            if (
+              results[i].ingredients[k].ingredient
+                .toLowerCase()
+                .includes(searchedText[j])
+            ) {
+              isInIngredients[j] = true;
+              countInIngredients++;
+            }
+          }
+        }
+
+        if (
+          isInName.length === countInName ||
+          isInDesc.length === countInDesc ||
+          isInIngredients.length === countInIngredients
+        ) {
+          arrayNoDuplicates(output, results[i]);
         }
       }
-      return searchIn;
+
+      return output;
     };
 
     /*Actualisation de l'interfacce */
@@ -68,6 +94,55 @@ const mainSearch = () => {
   };
 
   input.addEventListener("input", (e) => onSearch(e));
+
+  /*Recherche par tag */
+  const tagsInput = [
+    document.querySelector("[name='ingredients']"),
+    document.querySelector("[name='ustensiles']"),
+    document.querySelector("[name='appareils']"),
+  ];
+
+  const onTagsSearch = (searchedTag, selectType) => {
+    let location =
+      "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
+
+    results = results.filter((recipe) =>
+      recipe.containsText(searchedTag, recipe[location])
+    );
+
+    /*Actualisation de l'interfacce */
+    refreshUiRecipes(results);
+  };
+
+  const onValidateTag = (e, input) => {
+    if (e.code === "Enter") {
+      e.preventDefault();
+      const inputName = input.getAttribute("name") + "-tag";
+
+      createTag(input.value, inputName).addEventListener("click", (e) =>
+        closeTag(e)
+      );
+    }
+    if (!e.code) {
+      createTag(
+        e.target.textContent,
+        e.target.getAttribute("id").replace(/[0-9]?[0-9]/, "tag")
+      ).addEventListener("click", (e) => closeTag(e));
+    }
+  };
+
+  tagsInput.forEach((tagInput) => {
+    tagInput.addEventListener("input", (e) => {
+      const searchedTag = e.target.value.toLowerCase().split(" ");
+      const selectType = e.target.getAttribute("name");
+      onTagsSearch(searchedTag, selectType);
+    });
+    tagInput.addEventListener("keydown", (e) => {
+      if (e.code === "Enter") {
+        onValidateTag(e, tagInput);
+      }
+    });
+  });
 };
 
 export default mainSearch;
