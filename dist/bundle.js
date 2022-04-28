@@ -1815,9 +1815,6 @@ const mainSearch = () => {
     ustensiles: []
   };
   let mainResults = [];
-  const ingredientsTags = [];
-  const appareilsTags = [];
-  const ustensilesTags = [];
   const selects = {
     ingredients: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_1__.findIngredients)(searchIn),
     ustensiles: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_1__.findUstensils)(searchIn),
@@ -1852,29 +1849,20 @@ const mainSearch = () => {
     }
 
     for (let i = 0; i < recipes.length; i++) {
-      let isInName = new Array(searchedText.length);
-      let countInName = 0;
-      let isInDesc = new Array(searchedText.length);
-      let countInDesc = 0;
       let allTerms = new Array(searchedText.length);
-      let isInIngredients = new Array(searchedText.length);
-      let countInIngredients = 0;
 
       for (let j = 0; j < searchedText.length; j++) {
         if (recipes[i].name.toLowerCase().includes(searchedText[j])) {
           allTerms[j] = true;
-          countInName++;
         }
 
         if (recipes[i].description.toLowerCase().includes(searchedText[j])) {
           allTerms[j] = true;
-          countInDesc++;
         }
 
         for (let k = 0; k < recipes[i].ingredients.length; k++) {
           if (recipes[i].ingredients[k].ingredient.toLowerCase().includes(searchedText[j])) {
             allTerms[j] = true;
-            countInIngredients++;
           }
         }
       }
@@ -1919,7 +1907,7 @@ const mainSearch = () => {
     if (reset(searchedText)) {
       currentTags();
 
-      if (ingredientsTags.length > 0 || appareilsTags.length > 0 || ustensilesTags.length > 0) {
+      if (isTagd()) {
         findRecipesByTags();
       } else {
         (0,_services__WEBPACK_IMPORTED_MODULE_2__.initialState)();
@@ -2005,7 +1993,8 @@ const mainSearch = () => {
     }
 
     let filteredFromTags = recipes;
-    currentTags();
+    /* currentTags();*/
+
     console.log("tags", recipes);
 
     if (allTags.ingredients.length > 0) {
