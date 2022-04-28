@@ -1,17 +1,22 @@
-const createTag = (textTag, tagType) => {
-  const tagsContainer = document.querySelector(".tags");
+const createTag = (textTag, select) => {
+  console.log("select", select);
+  const tagsSelectTypeContainer = document.querySelector(
+    `.${select}-container`
+  );
+
   const box = document.createElement("div");
-  box.className = `tag ${tagType} tag-${textTag}`;
+  box.className = `tag ${select}-tag tag-${textTag.replaceAll(" ", "-")}`;
 
   const content = document.createElement("span");
   content.textContent = textTag;
 
   const closeTag = document.createElement("button");
   closeTag.className = "close-tag";
-  closeTag.setAttribute("data-tag", `${textTag}`);
+  closeTag.setAttribute("data-tag", `${textTag.replaceAll(" ", "-")}`);
+  closeTag.setAttribute("data-select", select);
 
   box.append(content, closeTag);
-  tagsContainer.append(box);
+  tagsSelectTypeContainer.append(box);
 
   return closeTag;
 };

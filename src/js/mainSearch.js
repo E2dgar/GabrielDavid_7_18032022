@@ -1,72 +1,109 @@
 import refreshUiRecipes from "./components/recipesUI";
-import { allRecipes } from "./http";
+import {
+  allRecipes,
+  findAppliances,
+  findIngredients,
+  findUstensils,
+} from "./http";
 import { arrayNoDuplicates, initialState } from "./services";
 import domBuilder from "./domBuilder";
 import createTag from "./components/tag";
+import updateSelect from "./components/filterSelect/updateSelect";
 
 const mainSearch = () => {
-  const input = document.querySelector("[name='q']");
+  const inputMain = document.querySelector("[name='q']");
 
-  let results = allRecipes;
+  let allTags = {
+    ingredients: [],
+    appareils: [],
+    ustensiles: [],
+  };
+  let mainResults = [];
+  let tagsResults = [];
+  let tagsResultsForList = [];
+  const ingredientsTags = [];
+  const appareilsTags = [];
+  const ustensilesTags = [];
+
+  const selects = {
+    ingredients: (searchIn) => findIngredients(searchIn),
+    ustensiles: (searchIn) => findUstensils(searchIn),
+    appareils: (searchIn) => findAppliances(searchIn),
+  };
 
   /**
    * @param {Array} searchedText
    */
   const searchAndUpdateResult = (searchedText) => {
-    /**
-     * Return an Array of recipes containing searched term(s)
-     * @param {Array} searchTextArray
-     * @returns {Array} results
-     */
+    /*Actualisation de l'interfacce */
+    refreshUiRecipes(findRecipesByMain(searchedText));
+    /*Update selects */
+    updateSelect("ingredients", selects.ingredients(mainResults));
+    updateSelect("appareils", selects.appareils(mainResults));
+    updateSelect("ustensiles", selects.ustensiles(mainResults));
+  };
 
-    let output = [];
+  const isTag = () => {
+    if (
+      allTags.ingredients.length > 0 ||
+      allTags.appareils.length > 0 ||
+      allTags.ustensiles.length > 0
+    ) {
+      return true;
+    }
+  };
 
-    const findRecipes = (searchedText) => {
-      for (let i = 0; i < results.length; i++) {
-        let isInName = new Array(searchedText.length);
-        let countInName = 0;
+  const findRecipesByMain = (searchedText) => {
+    let recipes = [];
+    let resultsFromMain = [];
 
-        let isInDesc = new Array(searchedText.length);
-        let countInDesc = 0;
+    if (isTag()) {
+      recipes = findRecipesByTags();
+    } else {
+      recipes = allRecipes;
+    }
 
-        let isInIngredients = new Array(searchedText.length);
-        let countInIngredients = 0;
+    for (let i = 0; i < recipes.length; i++) {
+      let isInName = new Array(searchedText.length);
+      let countInName = 0;
 
-        for (let j = 0; j < searchedText.length; j++) {
-          if (results[i].name.toLowerCase().includes(searchedText[j])) {
-            isInName[j] = true;
-            countInName++;
-          }
-          if (results[i].description.toLowerCase().includes(searchedText[j])) {
-            isInDesc[j] = true;
-            countInDesc++;
-          }
-          for (let k = 0; k < results[i].ingredients.length; k++) {
-            if (
-              results[i].ingredients[k].ingredient
-                .toLowerCase()
-                .includes(searchedText[j])
-            ) {
-              isInIngredients[j] = true;
-              countInIngredients++;
-            }
-          }
+      let isInDesc = new Array(searchedText.length);
+      let countInDesc = 0;
+
+      let isInIngredients = new Array(searchedText.length);
+      let countInIngredients = 0;
+
+      for (let j = 0; j < searchedText.length; j++) {
+        if (recipes[i].name.toLowerCase().includes(searchedText[j])) {
+          isInName[j] = true;
+          countInName++;
         }
-
-        if (
-          isInName.length === countInName ||
-          isInDesc.length === countInDesc ||
-          isInIngredients.length === countInIngredients
-        ) {
-          arrayNoDuplicates(output, results[i]);
+        if (recipes[i].description.toLowerCase().includes(searchedText[j])) {
+          isInDesc[j] = true;
+          countInDesc++;
+        }
+        for (let k = 0; k < recipes[i].ingredients.length; k++) {
+          if (
+            recipes[i].ingredients[k].ingredient
+              .toLowerCase()
+              .includes(searchedText[j])
+          ) {
+            isInIngredients[j] = true;
+            countInIngredients++;
+          }
         }
       }
 
-      return output;
-    };
+      if (
+        isInName.length === countInName ||
+        isInDesc.length === countInDesc ||
+        isInIngredients.length === countInIngredients
+      ) {
+        arrayNoDuplicates(resultsFromMain, recipes[i]);
+      }
+    }
 
-    /*Actualisation de l'interfacce */
-    refreshUiRecipes(findRecipes(searchedText));
+    return resultsFromMain;
   };
 
   /*La recherche ne se déclenche qu'à partir de 3 chars saisis */
@@ -89,11 +126,21 @@ const mainSearch = () => {
     }
 
     if (reset(searchedText)) {
-      initialState();
+      currentTags();
+      if (
+        ingredientsTags.length > 0 ||
+        appareilsTags.length > 0 ||
+        ustensilesTags.length > 0
+      ) {
+        console.log("upatettag ");
+        findRecipesByTags();
+      } else {
+        initialState();
+      }
     }
   };
 
-  input.addEventListener("input", (e) => onSearch(e));
+  inputMain.addEventListener("input", (e) => onSearch(e));
 
   /*Recherche par tag */
   const tagsInput = [
@@ -103,31 +150,152 @@ const mainSearch = () => {
   ];
 
   const onTagsSearch = (searchedTag, selectType) => {
-    let location =
-      "searchIn" + selectType.charAt(0).toUpperCase() + selectType.slice(1);
+    const currentResults = mainResults.length === 0 ? allRecipes : mainResults;
+    let ingredientsList = selects.ingredients(currentResults);
+    let appareilsList = selects.appareils(currentResults);
+    let ustensilesList = selects.ustensiles(currentResults);
+    let liInSelect = [];
 
-    results = results.filter((recipe) =>
-      recipe.containsText(searchedTag, recipe[location])
-    );
+    const getTagsInSelect = (select) => {
+      select.forEach((li) => {
+        let isInList = [];
 
-    /*Actualisation de l'interfacce */
-    refreshUiRecipes(results);
+        for (let i = 0; i < searchedTag.length; i++) {
+          if (li.includes(searchedTag[i])) {
+            isInList.push(li);
+          }
+        }
+        if (searchedTag.length === isInList.length) {
+          arrayNoDuplicates(liInSelect, li);
+        }
+      });
+    };
+
+    let updatedList = [];
+    switch (selectType) {
+      case "ingredients":
+        getTagsInSelect(ingredientsList);
+        updatedList = ingredientsList.filter((tag) => liInSelect.includes(tag));
+        break;
+      case "appareils":
+        getTagsInSelect(appareilsList);
+        updatedList = appareilsList.filter((tag) => liInSelect.includes(tag));
+        break;
+      case "ustensiles":
+        getTagsInSelect(ustensilesList);
+        updatedList = ustensilesList.filter((tag) => liInSelect.includes(tag));
+        break;
+    }
+    updateSelect(selectType, updatedList);
+  };
+
+  const currentTags = () => {
+    document
+      .querySelectorAll(".ingredients-tag span")
+      .forEach((span) => ingredientsTags.push(span.textContent));
+    document
+      .querySelectorAll(".appareils-tag span")
+      .forEach((span) => appareilsTags.push(span.textContent));
+    document
+      .querySelectorAll(".ustensiles-tag span")
+      .forEach((span) => ustensilesTags.push(span.textContent));
+  };
+
+  const updateAllSelects = (results) => {
+    updateSelect("ingredients", selects.ingredients(results));
+    updateSelect("appareils", selects.appareils(results));
+    updateSelect("ustensiles", selects.ustensiles(results));
+  };
+  const findRecipesByTags = () => {
+    let recipes = [];
+    if (inputMain.value !== "") {
+      console.log("here");
+    } else {
+      console.log("there");
+      recipes = allRecipes;
+    }
+
+    let filteredFromTags = recipes;
+    currentTags();
+    console.log(typeof selects.ingredients);
+    if (allTags.ingredients.length > 0) {
+      allTags.ingredients.forEach((tag) => {
+        filteredFromTags = filteredFromTags.filter((recipe) =>
+          recipe.containsText(
+            tag.replaceAll("-", " "),
+            recipe.searchInIngredients
+          )
+        );
+      });
+    }
+
+    if (allTags.appareils.length > 0) {
+      allTags.appareils.forEach((tag) => {
+        filteredFromTags = filteredFromTags.filter((recipe) =>
+          recipe.containsText(
+            tag.replaceAll("-", " "),
+            recipe.searchInAppareils
+          )
+        );
+      });
+    }
+
+    if (allTags.ustensiles.length > 0) {
+      allTags.ustensiles.forEach((tag) => {
+        filteredFromTags = filteredFromTags.filter((recipe) =>
+          recipe.containsText(
+            tag.replaceAll("-", " "),
+            recipe.searchInUstensiles
+          )
+        );
+      });
+    }
+    refreshUiRecipes(filteredFromTags);
+    updateAllSelects(filteredFromTags);
+    return filteredFromTags;
   };
 
   const onValidateTag = (e, input) => {
     if (e.code === "Enter") {
       e.preventDefault();
-      const inputName = input.getAttribute("name") + "-tag";
+      const select = input.getAttribute("name");
 
-      createTag(input.value, inputName).addEventListener("click", (e) =>
+      createTag(input.value, select).addEventListener("click", (e) =>
         closeTag(e)
       );
+
+      allTags[input.getAttribute("name")].push(
+        input.value.replaceAll(" ", "-")
+      );
+
+      input.value = null;
     }
     if (!e.code) {
       createTag(
         e.target.textContent,
         e.target.getAttribute("id").replace(/[0-9]?[0-9]/, "tag")
       ).addEventListener("click", (e) => closeTag(e));
+    }
+    findRecipesByTags();
+  };
+
+  const closeTag = (e) => {
+    const select = e.currentTarget.getAttribute("data-select");
+    const tag = e.currentTarget.getAttribute("data-tag");
+
+    document.querySelector(`.tag-${tag}`).remove();
+    allTags[select] = allTags[select].filter((value) => value !== tag);
+
+    updateAllSelects(findRecipesByTags());
+
+    /*On refresh l'UI avec les derniers résultats moins le tag supprimé */
+    if (isTag()) {
+      console.log("isTag");
+      findRecipesByTags();
+    } else if (inputMain.value !== "") {
+      console.log("isMain");
+      searchAndUpdateResult(inputMain.value.toLowerCase().split(" "));
+    } else {
     }
   };
 
@@ -143,6 +311,47 @@ const mainSearch = () => {
       }
     });
   });
+
+  const updateSelectOnShow = (e) => {
+    if (
+      document.querySelectorAll(".ingredients-tag span").length > 0 ||
+      document.querySelectorAll(".appareils-tag span").length > 0 ||
+      document.querySelectorAll(".ustensiles-tag span").length > 0
+    ) {
+      const selectType = e.target.getAttribute("id").replace("-button", "");
+      switch (selectType) {
+        case "ingredients":
+          updateSelect(
+            "ingredients",
+            selects.ingredients(
+              tagsResultsForList.length > 0 ? tagsResultsForList : allRecipes
+            )
+          );
+          break;
+        case "appareils":
+          updateSelect(
+            "appareils",
+            selects.appareils(
+              tagsResultsForList.length > 0 ? tagsResultsForList : allRecipes
+            )
+          );
+          break;
+        case "ustensiles":
+          updateSelect(
+            "ustensiles",
+            selects.ustensiles(
+              tagsResultsForList.length > 0 ? tagsResultsForList : allRecipes
+            )
+          );
+          break;
+      }
+    }
+  };
+
+  /*const buttons = document.querySelectorAll("button");
+  buttons.forEach((button) =>
+    button.addEventListener("click", (e) => updateSelectOnShow(e))
+  );*/
 };
 
 export default mainSearch;

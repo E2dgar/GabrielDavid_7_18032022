@@ -36,7 +36,7 @@ const findAppliances = (recipes) => {
 };
 
 /**
- * Return array of tags existing recipes location (ingredients, ustensiles or appareils)
+ * Return array of tags existing in recipes location (ingredients, ustensiles or appareils)
  * @param {Array} recipes
  * @param {string} tag
  * @param {string} location
