@@ -19,8 +19,6 @@ const mainSearch = () => {
     ustensiles: [],
   };
   let mainResults = [];
-  let tagsResults = [];
-  let tagsResultsForList = [];
   const ingredientsTags = [];
   const appareilsTags = [];
   const ustensilesTags = [];
@@ -38,9 +36,7 @@ const mainSearch = () => {
     /*Actualisation de l'interfacce */
     refreshUiRecipes(findRecipesByMain(searchedText));
     /*Update selects */
-    updateSelect("ingredients", selects.ingredients(mainResults));
-    updateSelect("appareils", selects.appareils(mainResults));
-    updateSelect("ustensiles", selects.ustensiles(mainResults));
+    updateAllSelects(findRecipesByMain(searchedText));
   };
 
   const isTag = () => {
@@ -70,16 +66,17 @@ const mainSearch = () => {
       let isInDesc = new Array(searchedText.length);
       let countInDesc = 0;
 
+      let allTerms = new Array(searchedText.length);
       let isInIngredients = new Array(searchedText.length);
       let countInIngredients = 0;
 
       for (let j = 0; j < searchedText.length; j++) {
         if (recipes[i].name.toLowerCase().includes(searchedText[j])) {
-          isInName[j] = true;
+          allTerms[j] = true;
           countInName++;
         }
         if (recipes[i].description.toLowerCase().includes(searchedText[j])) {
-          isInDesc[j] = true;
+          allTerms[j] = true;
           countInDesc++;
         }
         for (let k = 0; k < recipes[i].ingredients.length; k++) {
@@ -88,22 +85,24 @@ const mainSearch = () => {
               .toLowerCase()
               .includes(searchedText[j])
           ) {
-            isInIngredients[j] = true;
+            allTerms[j] = true;
             countInIngredients++;
           }
         }
       }
 
-      if (
-        isInName.length === countInName ||
-        isInDesc.length === countInDesc ||
-        isInIngredients.length === countInIngredients
-      ) {
+      let countPresentTerm = 0;
+      for (let k = 0; k < allTerms.length; k++) {
+        if (allTerms[k]) {
+          countPresentTerm++;
+        }
+      }
+      if (allTerms.length === countPresentTerm) {
         arrayNoDuplicates(resultsFromMain, recipes[i]);
       }
     }
 
-    return resultsFromMain;
+    return (mainResults = resultsFromMain);
   };
 
   /*La recherche ne se déclenche qu'à partir de 3 chars saisis */
@@ -132,7 +131,6 @@ const mainSearch = () => {
         appareilsTags.length > 0 ||
         ustensilesTags.length > 0
       ) {
-        console.log("upatettag ");
         findRecipesByTags();
       } else {
         initialState();
@@ -201,15 +199,20 @@ const mainSearch = () => {
       .forEach((span) => ustensilesTags.push(span.textContent));
   };
 
+  /**
+   * Update all selects from an array of recipes
+   * @param {Array} results
+   */
   const updateAllSelects = (results) => {
     updateSelect("ingredients", selects.ingredients(results));
     updateSelect("appareils", selects.appareils(results));
     updateSelect("ustensiles", selects.ustensiles(results));
   };
+
   const findRecipesByTags = () => {
     let recipes = [];
     if (inputMain.value !== "") {
-      console.log("here");
+      recipes = mainResults;
     } else {
       console.log("there");
       recipes = allRecipes;
@@ -217,7 +220,7 @@ const mainSearch = () => {
 
     let filteredFromTags = recipes;
     currentTags();
-    console.log(typeof selects.ingredients);
+    console.log("tags", recipes);
     if (allTags.ingredients.length > 0) {
       allTags.ingredients.forEach((tag) => {
         filteredFromTags = filteredFromTags.filter((recipe) =>
@@ -311,47 +314,6 @@ const mainSearch = () => {
       }
     });
   });
-
-  const updateSelectOnShow = (e) => {
-    if (
-      document.querySelectorAll(".ingredients-tag span").length > 0 ||
-      document.querySelectorAll(".appareils-tag span").length > 0 ||
-      document.querySelectorAll(".ustensiles-tag span").length > 0
-    ) {
-      const selectType = e.target.getAttribute("id").replace("-button", "");
-      switch (selectType) {
-        case "ingredients":
-          updateSelect(
-            "ingredients",
-            selects.ingredients(
-              tagsResultsForList.length > 0 ? tagsResultsForList : allRecipes
-            )
-          );
-          break;
-        case "appareils":
-          updateSelect(
-            "appareils",
-            selects.appareils(
-              tagsResultsForList.length > 0 ? tagsResultsForList : allRecipes
-            )
-          );
-          break;
-        case "ustensiles":
-          updateSelect(
-            "ustensiles",
-            selects.ustensiles(
-              tagsResultsForList.length > 0 ? tagsResultsForList : allRecipes
-            )
-          );
-          break;
-      }
-    }
-  };
-
-  /*const buttons = document.querySelectorAll("button");
-  buttons.forEach((button) =>
-    button.addEventListener("click", (e) => updateSelectOnShow(e))
-  );*/
 };
 
 export default mainSearch;
