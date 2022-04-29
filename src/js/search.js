@@ -110,7 +110,6 @@ const search = () => {
   };
 
   const onSearch = (e) => {
-    console.log(e);
     /*La recherche est un tableau de termes pour prendre en compte plusieurs mot et boucler dessus */
     const searchedText = e.target.value.toLowerCase().split(" ");
 
@@ -125,7 +124,7 @@ const search = () => {
       if (isTag()) {
         findRecipesByTags();
       } /*Sinon on affiche toutes les recttes */ else {
-        initialState();
+        updateAllSelects(allRecipes);
       }
     }
   };
@@ -146,8 +145,7 @@ const search = () => {
    */
   const liveRefreshOptionsSelect = (searchedTag, selectType) => {
     /*Si il a une recherche princpale d'éffectuée on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
-    const currentResults = mainResults.length === 0 ? allRecipes : mainResults;
-
+    const currentResults = allRecipes;
     /*Déclaration du tableau de tous les éléments de liste qui match avec la recherche*/
     let liInSelect = [];
 
@@ -240,7 +238,8 @@ const search = () => {
     /*On update l'UI (recettes)  et les listes des selects*/
 
     refreshUiRecipes(filteredFromTags);
-    updateAllSelects(filteredFromTags);
+    /*True en 2eme param pour supprimer de la liste du select le tag ajouté à la validation du tag */
+    updateAllSelects(filteredFromTags, true);
 
     if (filteredFromTags.length === 1) {
       emptySelects();
@@ -281,8 +280,7 @@ const search = () => {
 
     document.querySelector(`.tag-${tag}`).remove();
     allTags[select] = allTags[select].filter((value) => value !== tag);
-
-    updateAllSelects(findRecipesByTags());
+    console.log(allTags);
 
     if (isTag()) {
       findRecipesByTags();

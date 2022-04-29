@@ -89,7 +89,7 @@ const createSelects = options => {
  */
 
 
-const updateOneSelect = (select, options) => {
+const updateOneSelect = (select, options, isTagValidated) => {
   /*On masque toutes les options */
   const optionsLi = document.querySelectorAll(`.${select}-list [role='option']`);
 
@@ -100,14 +100,29 @@ const updateOneSelect = (select, options) => {
   const allTagsPresents = document.querySelectorAll(".tag span");
   const allTextTags = [];
   allTagsPresents.forEach(span => allTextTags.push(span.textContent));
+  let liCount = 0;
+  /*if (options.length > 1) {*/
 
-  if (options.length > 1) {
-    /*On boucle sur les li pour afficher celles contenu dans le tableau options tout en masquant la li égal au tag */
-    optionsLi.forEach(li => {
+  /*On boucle sur les li pour afficher celles contenu dans le tableau options tout en masquant la li égal au tag */
+
+  optionsLi.forEach(li => {
+    if (isTagValidated) {
       if (options.includes(li.textContent.toLowerCase()) && !allTextTags.includes(li.textContent)) {
         li.classList.remove("hidden-li");
+        liCount++;
       }
-    });
+    } else {
+      if (options.includes(li.textContent.toLowerCase())) {
+        li.classList.remove("hidden-li");
+        liCount++;
+      }
+    }
+  });
+
+  if (liCount === 0) {
+    document.querySelector(`[name=${select}]`).setAttribute("disabled", true);
+  } else {
+    document.querySelector(`[name=${select}]`).removeAttribute("disabled");
   }
 };
 /*Objet retournant pour chaque select le tableau de ses éléments de liste*/
@@ -123,10 +138,10 @@ const elementsInSelect = {
  * @param {Array} results
  */
 
-const updateAllSelects = results => {
-  updateOneSelect("ingredients", elementsInSelect.ingredients(results));
-  updateOneSelect("appareils", elementsInSelect.appareils(results));
-  updateOneSelect("ustensiles", elementsInSelect.ustensiles(results));
+const updateAllSelects = (results, isTagValidated) => {
+  updateOneSelect("ingredients", elementsInSelect.ingredients(results), isTagValidated);
+  updateOneSelect("appareils", elementsInSelect.appareils(results), isTagValidated);
+  updateOneSelect("ustensiles", elementsInSelect.ustensiles(results), isTagValidated);
 };
 
 
@@ -1990,9 +2005,7 @@ const search = () => {
   };
 
   const onSearch = e => {
-    console.log(e);
     /*La recherche est un tableau de termes pour prendre en compte plusieurs mot et boucler dessus */
-
     const searchedText = e.target.value.toLowerCase().split(" ");
 
     if (canSearch(searchedText[0])) {
@@ -2009,7 +2022,7 @@ const search = () => {
       }
       /*Sinon on affiche toutes les recttes */
       else {
-        (0,_services__WEBPACK_IMPORTED_MODULE_2__.initialState)();
+        (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(_http__WEBPACK_IMPORTED_MODULE_1__.allRecipes);
       }
     }
   };
@@ -2030,7 +2043,7 @@ const search = () => {
 
   const liveRefreshOptionsSelect = (searchedTag, selectType) => {
     /*Si il a une recherche princpale d'éffectuée on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
-    const currentResults = mainResults.length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : mainResults;
+    const currentResults = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
     /*Déclaration du tableau de tous les éléments de liste qui match avec la recherche*/
 
     let liInSelect = [];
@@ -2107,7 +2120,9 @@ const search = () => {
 
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(filteredFromTags);
-    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(filteredFromTags);
+    /*True en 2eme param pour supprimer de la liste du select le tag ajouté à la validation du tag */
+
+    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(filteredFromTags, true);
 
     if (filteredFromTags.length === 1) {
       emptySelects();
@@ -2144,7 +2159,7 @@ const search = () => {
     const tag = e.currentTarget.getAttribute("data-tag");
     document.querySelector(`.tag-${tag}`).remove();
     allTags[select] = allTags[select].filter(value => value !== tag);
-    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(findRecipesByTags());
+    console.log(allTags);
 
     if (isTag()) {
       findRecipesByTags();

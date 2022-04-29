@@ -28,7 +28,7 @@ const createSelects = (options) => {
  * @param {string} select
  * @param {Array} options
  */
-const updateOneSelect = (select, options) => {
+const updateOneSelect = (select, options, isTagValidated) => {
   /*On masque toutes les options */
   const optionsLi = document.querySelectorAll(
     `.${select}-list [role='option']`
@@ -41,16 +41,29 @@ const updateOneSelect = (select, options) => {
   const allTextTags = [];
   allTagsPresents.forEach((span) => allTextTags.push(span.textContent));
 
-  if (options.length > 1) {
-    /*On boucle sur les li pour afficher celles contenu dans le tableau options tout en masquant la li égal au tag */
-    optionsLi.forEach((li) => {
+  let liCount = 0;
+  /*if (options.length > 1) {*/
+  /*On boucle sur les li pour afficher celles contenu dans le tableau options tout en masquant la li égal au tag */
+  optionsLi.forEach((li) => {
+    if (isTagValidated) {
       if (
         options.includes(li.textContent.toLowerCase()) &&
         !allTextTags.includes(li.textContent)
       ) {
         li.classList.remove("hidden-li");
+        liCount++;
       }
-    });
+    } else {
+      if (options.includes(li.textContent.toLowerCase())) {
+        li.classList.remove("hidden-li");
+        liCount++;
+      }
+    }
+  });
+  if (liCount === 0) {
+    document.querySelector(`[name=${select}]`).setAttribute("disabled", true);
+  } else {
+    document.querySelector(`[name=${select}]`).removeAttribute("disabled");
   }
 };
 
@@ -65,10 +78,22 @@ const elementsInSelect = {
  * Update all selects from an array of recipes
  * @param {Array} results
  */
-const updateAllSelects = (results) => {
-  updateOneSelect("ingredients", elementsInSelect.ingredients(results));
-  updateOneSelect("appareils", elementsInSelect.appareils(results));
-  updateOneSelect("ustensiles", elementsInSelect.ustensiles(results));
+const updateAllSelects = (results, isTagValidated) => {
+  updateOneSelect(
+    "ingredients",
+    elementsInSelect.ingredients(results),
+    isTagValidated
+  );
+  updateOneSelect(
+    "appareils",
+    elementsInSelect.appareils(results),
+    isTagValidated
+  );
+  updateOneSelect(
+    "ustensiles",
+    elementsInSelect.ustensiles(results),
+    isTagValidated
+  );
 };
 
 export { createSelects, updateOneSelect, updateAllSelects, elementsInSelect };
