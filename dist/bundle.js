@@ -18,9 +18,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "arrayNoDuplicates": () => (/* binding */ arrayNoDuplicates),
 /* harmony export */   "initialState": () => (/* binding */ initialState)
 /* harmony export */ });
-/* harmony import */ var _components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var _components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
 
 
 
@@ -35,18 +35,11 @@ const arrayNoDuplicates = (array, item) => {
     array.push(item);
   }
 };
+/*Au chargement rempli les select avec les données initiales */
+
 
 const initialState = () => {
-  (0,_components_filterSelect_selectUI__WEBPACK_IMPORTED_MODULE_0__["default"])([{
-    name: "ingredients",
-    list: (0,_http__WEBPACK_IMPORTED_MODULE_2__.findIngredients)(_http__WEBPACK_IMPORTED_MODULE_2__.allRecipes)
-  }, {
-    name: "appareils",
-    list: (0,_http__WEBPACK_IMPORTED_MODULE_2__.findAppliances)(_http__WEBPACK_IMPORTED_MODULE_2__.allRecipes)
-  }, {
-    name: "ustensiles",
-    list: (0,_http__WEBPACK_IMPORTED_MODULE_2__.findUstensils)(_http__WEBPACK_IMPORTED_MODULE_2__.allRecipes)
-  }]);
+  (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_0__.createSelects)(_http__WEBPACK_IMPORTED_MODULE_2__.allRecipes);
   (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_1__["default"])();
 };
 
@@ -58,127 +51,88 @@ const initialState = () => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "createSelects": () => (/* binding */ createSelects),
+/* harmony export */   "elementsInSelect": () => (/* binding */ elementsInSelect),
+/* harmony export */   "updateAllSelects": () => (/* binding */ updateAllSelects),
+/* harmony export */   "updateOneSelect": () => (/* binding */ updateOneSelect)
 /* harmony export */ });
-const selectUI = options => {
-  const optionsLi = document.querySelectorAll("[role='option']");
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 
-  if (optionsLi.length > 0) {
-    optionsLi.forEach(option => option.remove());
-  }
+/**
+ * Uodate un select d'après un tableau de recettes
+ * @param {string} select
+ * @param {Array} options
+ */
 
-  let optionsCount = 0;
-  options.forEach(option => {
-    let targetedList = document.querySelector(`.${option.name}-list`);
-    option.list.forEach(element => {
+const createSelects = options => {
+  const selectsTypes = ["ingredients", "appareils", "ustensiles"];
+  /*On boucle sur les options pourles ajouter au select */
+
+  selectsTypes.forEach(selectType => {
+    let optionsCount = 0;
+    elementsInSelect[selectType](options).forEach(option => {
+      let targetedList = document.querySelector(`.${selectType}-list`);
       optionsCount++;
       let optionLi = document.createElement("li");
-      optionLi.setAttribute("id", option.name + "-" + optionsCount);
+      optionLi.setAttribute("id", selectType + "-" + optionsCount);
       optionLi.setAttribute("role", "option");
       optionLi.setAttribute("tabindex", 0);
-      optionLi.textContent = element;
+      optionLi.textContent = option;
       targetedList.append(optionLi);
     });
   });
 };
+/**
+ * Uodate un select d'après un tableau de recettes
+ * @param {string} select
+ * @param {Array} options
+ */
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (selectUI);
+
+const updateOneSelect = (select, options) => {
+  /*On masque toutes les options */
+  const optionsLi = document.querySelectorAll(`.${select}-list [role='option']`);
+
+  if (optionsLi.length > 0) {
+    optionsLi.forEach(li => li.classList.add("hidden-li"));
+  }
+
+  const allTagsPresents = document.querySelectorAll(".tag span");
+  const allTextTags = [];
+  allTagsPresents.forEach(span => allTextTags.push(span.textContent));
+
+  if (options.length > 1) {
+    /*On boucle sur les li pour afficher celles contenu dans le tableau options tout en masquant la li égal au tag */
+    optionsLi.forEach(li => {
+      if (options.includes(li.textContent.toLowerCase()) && !allTextTags.includes(li.textContent)) {
+        li.classList.remove("hidden-li");
+      }
+    });
+  }
+};
+/*Objet retournant pour chaque select le tableau de ses éléments de liste*/
+
+
+const elementsInSelect = {
+  ingredients: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_0__.findIngredients)(searchIn),
+  ustensiles: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_0__.findUstensils)(searchIn),
+  appareils: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_0__.findAppliances)(searchIn)
+};
+/**
+ * Update all selects from an array of recipes
+ * @param {Array} results
+ */
+
+const updateAllSelects = results => {
+  updateOneSelect("ingredients", elementsInSelect.ingredients(results));
+  updateOneSelect("appareils", elementsInSelect.appareils(results));
+  updateOneSelect("ustensiles", elementsInSelect.ustensiles(results));
+};
+
+
 
 /***/ }),
 /* 4 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _domBuilder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
-
-
-/**
- * Met à jour l'UI en fonction du tableau de recettes passé
- * @param {Array} searchedRecipes
- * @returns
- */
-
-const refreshUiRecipes = searchedRecipes => {
-  /*On refresh UI, remove all articles */
-  document.querySelectorAll("article").forEach(article => article.remove());
-  const data = searchedRecipes ?? _http__WEBPACK_IMPORTED_MODULE_0__.allRecipes;
-  /*Display/hide 'no results' element----------*/
-
-  const noResultsElement = document.querySelector(".no-results");
-
-  if (data.length === 0) {
-    if (noResultsElement) {
-      return;
-    } else {
-      const noResults = document.createElement("p");
-      noResults.className = "no-results";
-      noResults.textContent = "Aucune recette pour cette recherche";
-      document.querySelector(".recettes").append(noResults);
-      return;
-    }
-  }
-
-  if (noResultsElement) {
-    noResultsElement.remove();
-  }
-  /*--------------------------------------------*/
-
-  /**
-   * Create card from a recipe
-   * @param {Object} recipe
-   */
-
-
-  const createCard = recipe => {
-    const article = document.createElement("article");
-    const img = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "img-container");
-    const title = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("h2", recipe.name);
-    const recipeTime = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("span", recipe.time + " min");
-    title.append(recipeTime);
-    const ingredientsAndDescriptionContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "details");
-    const ingredientsContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "ingredients-wrapper");
-    recipe.ingredients.forEach(ingredient => ingredientsContainer.append(createIngredient(ingredient)));
-    const description = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("div", recipe.description);
-    description.classList.add("description");
-    ingredientsAndDescriptionContainer.append(ingredientsContainer, description);
-    article.append(img, title, ingredientsAndDescriptionContainer);
-    document.querySelector(".recettes").append(article);
-  };
-  /**Create ingredient DOM element */
-
-
-  const createIngredient = element => {
-    const ingredient = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("p", element.ingredient + ": ");
-    ingredient.className = "ingredient";
-    const quantity = document.createElement("span");
-
-    if (element.unit) {
-      let unit = "&nbsp;" + element.unit;
-
-      if (element.unit === "ml" || element.unit === "cl") {
-        unit = element.unit;
-      }
-
-      quantity.innerHTML = `${element.quantity + unit}`;
-    } else {
-      quantity.textContent = element.quantity;
-    }
-
-    ingredient.append(quantity);
-    return ingredient;
-  };
-
-  data.forEach(recipe => createCard(recipe));
-};
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (refreshUiRecipes);
-
-/***/ }),
-/* 5 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -189,14 +143,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "findTagIn": () => (/* binding */ findTagIn),
 /* harmony export */   "findUstensils": () => (/* binding */ findUstensils)
 /* harmony export */ });
-/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var _Models_Recipe__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
+/* harmony import */ var _data_recipes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _Models_Recipe__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
 
 
 
 const allRecipes = [];
 _data_recipes__WEBPACK_IMPORTED_MODULE_0__["default"].forEach(recipe => allRecipes.push(new _Models_Recipe__WEBPACK_IMPORTED_MODULE_1__["default"](recipe)));
+/*Renvoi un tableau sans doublon de tous les ingredients des recettes passées en argument*/
 
 const findIngredients = recipes => {
   let ingredients = [];
@@ -207,6 +162,8 @@ const findIngredients = recipes => {
   });
   return ingredients;
 };
+/*Renvoi un tableau sans doublon de tous les ustensiles des recettes passées en argument*/
+
 
 const findUstensils = recipes => {
   let ustensiles = [];
@@ -218,6 +175,8 @@ const findUstensils = recipes => {
   });
   return ustensiles;
 };
+/*Renvoi un tableau sans doublon de tous les appareils des recttes passées en argument*/
+
 
 const findAppliances = recipes => {
   let appareils = [];
@@ -228,7 +187,7 @@ const findAppliances = recipes => {
   return appareils;
 };
 /**
- * Return array of tags existing in recipes location (ingredients, ustensiles or appareils)
+ *  Pour chaque select, renvoi un tableau des tags présent dans les recettes
  * @param {Array} recipes
  * @param {string} tag
  * @param {string} location
@@ -271,7 +230,7 @@ const findTagIn = (recipes, tag, location) => {
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1653,7 +1612,7 @@ const recipes = [{
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (recipes);
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1670,22 +1629,37 @@ class Recipe {
     this.ustensiles = data.ustensils;
     this.description = data.description;
   }
+  /*Récupère tous les ingrédients d'un recette sous la forme d'une chaîne de caractères */
+
 
   get searchInIngredients() {
     return [...this.ingredients.map(i => i.ingredient)].join().toLowerCase();
   }
+  /*Récupère tous les ustensiles d'un recette sous la forme d'une chaîne de caractères */
+
 
   get searchInUstensiles() {
     return [this.ustensiles].join().toLowerCase();
   }
+  /*Récupère tous les appareils d'un recette sous la forme d'une chaîne de caractères */
+
 
   get searchInAppareils() {
     return [this.appareils].join().toLowerCase();
   }
+  /*Récupère le nom, la description et les ingrédients d'une recette sous la forme d'une chaîne de caractères */
+
 
   get initialSearch() {
     return [this.name, this.description, this.searchInIngredients].join().toLowerCase();
   }
+  /**
+   * Test si une string est présente dans une chaîne de caractères
+   * @param {string} text
+   * @param {string} location
+   * @returns {boolean}
+   */
+
 
   containsText(text, location) {
     return location.includes(text);
@@ -1696,6 +1670,99 @@ class Recipe {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Recipe);
 
 /***/ }),
+/* 7 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _domBuilder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
+
+
+/**
+ * Met à jour l'UI en fonction du tableau de recettes passé
+ * @param {Array} searchedRecipes
+ * @returns
+ */
+
+const refreshUiRecipes = searchedRecipes => {
+  /*On refresh UI, remove all articles */
+  document.querySelectorAll("article").forEach(article => article.remove());
+  const data = searchedRecipes ?? _http__WEBPACK_IMPORTED_MODULE_0__.allRecipes;
+  /*Display/hide 'no results' element----------*/
+
+  const noResultsElement = document.querySelector(".no-results");
+
+  if (data.length === 0) {
+    if (noResultsElement) {
+      return;
+    } else {
+      const noResults = document.createElement("p");
+      noResults.className = "no-results";
+      noResults.textContent = "Aucune recette pour cette recherche";
+      document.querySelector(".recettes").append(noResults);
+      return;
+    }
+  }
+
+  if (noResultsElement) {
+    noResultsElement.remove();
+  }
+  /*--------------------------------------------*/
+
+  /**
+   * Create card from a recipe
+   * @param {Object} recipe
+   */
+
+
+  const createCard = recipe => {
+    const article = document.createElement("article");
+    const img = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "img-container");
+    const title = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("h2", recipe.name);
+    const recipeTime = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("span", recipe.time + " min");
+    title.append(recipeTime);
+    const ingredientsAndDescriptionContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "details");
+    const ingredientsContainer = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].wrapper("div", "ingredients-wrapper");
+    recipe.ingredients.forEach(ingredient => ingredientsContainer.append(createIngredient(ingredient)));
+    const description = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("div", recipe.description);
+    description.classList.add("description");
+    ingredientsAndDescriptionContainer.append(ingredientsContainer, description);
+    article.append(img, title, ingredientsAndDescriptionContainer);
+    document.querySelector(".recettes").append(article);
+  };
+  /**Create ingredient DOM element */
+
+
+  const createIngredient = element => {
+    const ingredient = _domBuilder__WEBPACK_IMPORTED_MODULE_1__["default"].elementWithContent("p", element.ingredient + ": ");
+    ingredient.className = "ingredient";
+    const quantity = document.createElement("span");
+
+    if (element.unit) {
+      let unit = "&nbsp;" + element.unit;
+
+      if (element.unit === "ml" || element.unit === "cl") {
+        unit = element.unit;
+      }
+
+      quantity.innerHTML = `${element.quantity + unit}`;
+    } else {
+      quantity.textContent = element.quantity;
+    }
+
+    ingredient.append(quantity);
+    return ingredient;
+  };
+
+  data.forEach(recipe => createCard(recipe));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (refreshUiRecipes);
+
+/***/ }),
 /* 8 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -1704,16 +1771,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const domBuilder = {
+  /*Creation de wrapper */
   wrapper: (tag, className) => {
     const domElement = document.createElement(tag);
     domElement.className = className;
     return domElement;
   },
+
+  /*Création d'éléments avec contenu */
   elementWithContent: (tag, content) => {
     const domElement = document.createElement(tag);
     domElement.textContent = content;
     return domElement;
   },
+
+  /*Suprresson d'éléments du DOM */
   removeElements: elements => {
     elements.forEach(element => element.remove());
   }
@@ -1728,7 +1800,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-const select = options => {
+const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
   const inputsCombo = document.querySelectorAll(".combo-lists input");
@@ -1736,7 +1808,7 @@ const select = options => {
    * Show the list of options
    */
 
-  const showList = (mainWrapper, listWrapper, button, list) => {
+  const showList = (mainWrapper, listWrapper, button) => {
     if (document.querySelector(".show")) {
       hiddenListActions();
     }
@@ -1794,12 +1866,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
-/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
+/* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
+/* harmony import */ var _http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
 /* harmony import */ var _domBuilder__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
 /* harmony import */ var _components_tag__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
-/* harmony import */ var _components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
+/* harmony import */ var _components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3);
 
 
 
@@ -1807,7 +1879,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const mainSearch = () => {
+const search = () => {
   const inputMain = document.querySelector("[name='q']");
   let allTags = {
     ingredients: [],
@@ -1815,21 +1887,16 @@ const mainSearch = () => {
     ustensiles: []
   };
   let mainResults = [];
-  const selects = {
-    ingredients: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_1__.findIngredients)(searchIn),
-    ustensiles: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_1__.findUstensils)(searchIn),
-    appareils: searchIn => (0,_http__WEBPACK_IMPORTED_MODULE_1__.findAppliances)(searchIn)
-  };
   /**
    * @param {Array} searchedText
    */
 
   const searchAndUpdateResult = searchedText => {
+    const recipes = findRecipesByMain(searchedText);
     /*Actualisation de l'interfacce */
-    (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(findRecipesByMain(searchedText));
-    /*Update selects */
 
-    updateAllSelects(findRecipesByMain(searchedText));
+    (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(recipes);
+    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(recipes);
   };
   /*Check si il ya des tags de recherche affichés*/
 
@@ -1845,7 +1912,7 @@ const mainSearch = () => {
   const findRecipesByMain = searchedText => {
     let recipes = [];
     let resultsFromMain = [];
-    /*Si il y a des tags on prend comme tableau de recherches les recettes déjà filtrés par un ou des tags */
+    /*Si il y a des tags on prend comme tableau de recherches les recettes déjà filtrées par un ou des tags */
 
     if (isTag()) {
       recipes = findRecipesByTags();
@@ -1859,7 +1926,7 @@ const mainSearch = () => {
 
     for (let i = 0; i < recipes.length; i++) {
       let allTerms = new Array(searchedText.length);
-      /*On boucle sur un tableau de termes gérer une recherche à plusieurs termes */
+      /*On boucle sur un tableau de termes pour gérer une recherche à plusieurs termes */
 
       for (let j = 0; j < searchedText.length; j++) {
         /*Si le terme[j] est présent dans le nom de la recette on le passe à true */
@@ -1891,12 +1958,16 @@ const mainSearch = () => {
           countPresentTerm++;
         }
       }
-      /*Si le nombre de true est égal aux nombres de termes recherchés on peut ajouter la recette au résultats*/
+      /*Si le nombre de true est égal aux nombres de termes recherchés tous les termes sont présents dan sla recette et on ajoute la recette au résultats*/
 
 
       if (allTerms.length === countPresentTerm) {
         (0,_services__WEBPACK_IMPORTED_MODULE_2__.arrayNoDuplicates)(resultsFromMain, recipes[i]);
       }
+    }
+
+    if (resultsFromMain.length === 1) {
+      emptySelects();
     }
 
     return mainResults = resultsFromMain;
@@ -1914,6 +1985,10 @@ const mainSearch = () => {
     return searchedText[0] === "";
   };
 
+  const emptySelects = () => {
+    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)([]);
+  };
+
   const onSearch = e => {
     /*La recherche est un tableau de termes pour prendre en compte plusieurs mot et boucler dessus */
     const searchedText = e.target.value.toLowerCase().split(" ");
@@ -1922,110 +1997,87 @@ const mainSearch = () => {
       _domBuilder__WEBPACK_IMPORTED_MODULE_3__["default"].removeElements(document.querySelectorAll(".recettes article"));
       searchAndUpdateResult(searchedText);
     }
+    /*Quand l'utilisateur efface les termes de la recherche principale*/
+
 
     if (reset(searchedText)) {
-      /*currentTags();*/
+      /*Si il y a des tags présents on rafraîchit les résultats avec les résultats de recherche de ces tags*/
       if (isTag()) {
         findRecipesByTags();
-      } else {
+      }
+      /*Sinon on affiche toutes les recttes */
+      else {
         (0,_services__WEBPACK_IMPORTED_MODULE_2__.initialState)();
       }
     }
   };
 
   inputMain.addEventListener("input", e => onSearch(e));
-  /*Recherche par tag */
+  /*TAG */
 
-  const tagsInput = [document.querySelector("[name='ingredients']"), document.querySelector("[name='ustensiles']"), document.querySelector("[name='appareils']")];
   /**
-   * Filtre la liste des select suivant les termes recherchés
+   * Filtre la liste des select en temps réel suivant les termes recherchés
    * @param {Array} searchedTag
    * @param {string} selectType
    */
 
-  const onTagsSearch = (searchedTag, selectType) => {
+  const liveRefreshOptionsSelect = (searchedTag, selectType) => {
+    /*Si il a une recherche princpale d'éffectuée on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
     const currentResults = mainResults.length === 0 ? _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes : mainResults;
-    let ingredientsList = selects.ingredients(currentResults);
-    let appareilsList = selects.appareils(currentResults);
-    let ustensilesList = selects.ustensiles(currentResults);
+    /*Déclaration du tableau de tous les éléments de liste qui match avec la recherche*/
+
     let liInSelect = [];
+    /**
+     * On crée une fonction qui check si le tag est présent dans la liste d'un select
+     * @param {string} select
+     */
 
     const getTagsInSelect = select => {
       select.forEach(li => {
+        /*On crée un tableau pour gérer une rechrche avec plusieurs termes*/
         let isInList = [];
+        /*Pou chaque terme de recherche */
 
         for (let i = 0; i < searchedTag.length; i++) {
+          /*Si le terme est présent dans un élément de liste*/
           if (li.includes(searchedTag[i])) {
+            /*On l'ajoute au tableau*/
             isInList.push(li);
           }
         }
+        /*Si le nombre de termes de la recherche est égal au nombre de terme dans le tableau c'est que tous les temres sont dans l'élement de liste, on peut ajouter l'élément au tableau de tous les éléments */
+
 
         if (searchedTag.length === isInList.length) {
           (0,_services__WEBPACK_IMPORTED_MODULE_2__.arrayNoDuplicates)(liInSelect, li);
         }
       });
+      return liInSelect;
     };
+    /*On met à jour les élements de liste du select concerné */
 
-    let updatedList = [];
-    /*Suivant le select dans lequel on est on filtre la liste en fonction des termes recherchés */
 
     switch (selectType) {
       case "ingredients":
-        getTagsInSelect(ingredientsList);
-        updatedList = ingredientsList.filter(tag => liInSelect.includes(tag));
+        (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateOneSelect)(selectType, getTagsInSelect(_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.elementsInSelect.ingredients(currentResults)));
         break;
 
       case "appareils":
-        getTagsInSelect(appareilsList);
-        updatedList = appareilsList.filter(tag => liInSelect.includes(tag));
+        (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateOneSelect)(selectType, getTagsInSelect(_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.elementsInSelect.appareils(currentResults)));
         break;
 
       case "ustensiles":
-        getTagsInSelect(ustensilesList);
-        updatedList = ustensilesList.filter(tag => liInSelect.includes(tag));
+        (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateOneSelect)(selectType, getTagsInSelect(_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.elementsInSelect.ustensiles(currentResults)));
         break;
     }
-
-    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__["default"])(selectType, updatedList);
   };
-  /*const currentTags = () => {
-    document
-      .querySelectorAll(".ingredients-tag span")
-      .forEach((span) => ingredientsTags.push(span.textContent));
-    document
-      .querySelectorAll(".appareils-tag span")
-      .forEach((span) => appareilsTags.push(span.textContent));
-    document
-      .querySelectorAll(".ustensiles-tag span")
-      .forEach((span) => ustensilesTags.push(span.textContent));
-  };*/
+  /*Recherhce par tags */
 
-  /**
-   * Update all selects from an array of recipes
-   * @param {Array} results
-   */
-
-
-  const updateAllSelects = results => {
-    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__["default"])("ingredients", selects.ingredients(results));
-    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__["default"])("appareils", selects.appareils(results));
-    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__["default"])("ustensiles", selects.ustensiles(results));
-  };
 
   const findRecipesByTags = () => {
-    let recipes = [];
-
-    if (inputMain.value !== "") {
-      recipes = mainResults;
-    } else {
-      console.log("there");
-      recipes = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
-    }
-
-    let filteredFromTags = recipes;
-    /* currentTags();*/
-
-    console.log("tags", recipes);
+    /*On prend comme base de recherche les résultas de la rechercheprincipale s'il y en a une sinon toutes les recettes*/
+    let filteredFromTags = mainResults.length > 0 ? mainResults : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+    /*On filtre les résultats avec les tags présents */
 
     if (allTags.ingredients.length > 0) {
       allTags.ingredients.forEach(tag => {
@@ -2044,11 +2096,20 @@ const mainSearch = () => {
         filteredFromTags = filteredFromTags.filter(recipe => recipe.containsText(tag.replaceAll("-", " "), recipe.searchInUstensiles));
       });
     }
+    /*On update l'UI (recettes)  et les listes des selects*/
+
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(filteredFromTags);
-    updateAllSelects(filteredFromTags);
+    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(filteredFromTags);
+
+    if (filteredFromTags.length === 1) {
+      emptySelects();
+    }
+
     return filteredFromTags;
   };
+  /*Déclenche la recherche par tag quand un tag est validé */
+
 
   const onValidateTag = (e, input) => {
     if (e.code === "Enter") {
@@ -2060,44 +2121,61 @@ const mainSearch = () => {
     }
 
     if (!e.code) {
-      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(e.target.textContent, e.target.getAttribute("id").replace(/[0-9]?[0-9]/, "tag")).addEventListener("click", e => closeTag(e));
+      const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
+      const tag = e.target.textContent;
+      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(tag, select).addEventListener("click", e => closeTag(e));
+      allTags[select].push(tag.replaceAll(" ", "-"));
     }
 
     findRecipesByTags();
   };
+  /*A la fermeture d'un tag on supprime le tag de l'interface et du tableau des tags et on update les listes des selects */
+
 
   const closeTag = e => {
     const select = e.currentTarget.getAttribute("data-select");
     const tag = e.currentTarget.getAttribute("data-tag");
     document.querySelector(`.tag-${tag}`).remove();
     allTags[select] = allTags[select].filter(value => value !== tag);
-    updateAllSelects(findRecipesByTags());
-    /*On refresh l'UI avec les derniers résultats moins le tag supprimé */
+    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(findRecipesByTags());
 
     if (isTag()) {
-      console.log("isTag");
       findRecipesByTags();
     } else if (inputMain.value !== "") {
-      console.log("isMain");
       searchAndUpdateResult(inputMain.value.toLowerCase().split(" "));
-    } else {}
+    }
   };
+  /*Ecouteurs sur les input de tags */
 
+
+  const tagsInput = [document.querySelector("[name='ingredients']"), document.querySelector("[name='ustensiles']"), document.querySelector("[name='appareils']")];
   tagsInput.forEach(tagInput => {
+    /*Ecouteur de la saisi des tags*/
     tagInput.addEventListener("input", e => {
       const searchedTag = e.target.value.toLowerCase().split(" ");
       const selectType = e.target.getAttribute("name");
-      onTagsSearch(searchedTag, selectType);
+      liveRefreshOptionsSelect(searchedTag, selectType);
     });
+    /*Ecouteurs pour validation du tag Enter key*/
+
     tagInput.addEventListener("keydown", e => {
       if (e.code === "Enter") {
         onValidateTag(e, tagInput);
       }
     });
   });
+  /*Selects updates */
+
+  document.querySelectorAll(".combo-list li").forEach(li => {
+    li.addEventListener("click", li => {
+      const selectInput = document.getElementsByName(li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, ""))[0];
+      selectInput.value = li.target.textContent;
+      selectInput.focus();
+    });
+  });
 };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (mainSearch);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (search);
 
 /***/ }),
 /* 11 */
@@ -2108,52 +2186,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const createTag = (textTag, select) => {
-  console.log("select", select);
+  /*On sélectionne le wrapper dans lequel on va ajouter les tags suivant le select*/
   const tagsSelectTypeContainer = document.querySelector(`.${select}-container`);
+  /*On crée une div qui conteindra le tag*/
+
   const box = document.createElement("div");
   box.className = `tag ${select}-tag tag-${textTag.replaceAll(" ", "-")}`;
+  /*On y ajoute le texte du tag */
+
   const content = document.createElement("span");
   content.textContent = textTag;
+  /*On crée le button de supression du tag */
+
   const closeTag = document.createElement("button");
   closeTag.className = "close-tag";
   closeTag.setAttribute("data-tag", `${textTag.replaceAll(" ", "-")}`);
   closeTag.setAttribute("data-select", select);
+  /*On ajoute au DOM*/
+
   box.append(content, closeTag);
   tagsSelectTypeContainer.append(box);
+  /*On return closeTag pourpouvoir y ajouter un écouteur*/
+
   return closeTag;
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (createTag);
-
-/***/ }),
-/* 12 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-const updateSelect = (select, options) => {
-  const optionsLi = document.querySelectorAll(`.${select}-list [role='option']`);
-
-  if (optionsLi.length > 0) {
-    optionsLi.forEach(option => option.remove());
-  }
-
-  let optionsCount = 0;
-  options.forEach(option => {
-    let targetedList = document.querySelector(`.${select}-list`);
-    optionsCount++;
-    let optionLi = document.createElement("li");
-    optionLi.setAttribute("id", select + "-" + optionsCount);
-    optionLi.setAttribute("role", "option");
-    optionLi.setAttribute("tabindex", 0);
-    optionLi.textContent = option;
-    targetedList.append(optionLi);
-  });
-};
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (updateSelect);
 
 /***/ })
 /******/ 	]);
@@ -2219,14 +2277,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_main_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _components_filterSelect_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9);
-/* harmony import */ var _mainSearch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+/* harmony import */ var _search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
 
 
 
 
 (0,_services__WEBPACK_IMPORTED_MODULE_1__.initialState)();
 (0,_components_filterSelect_select__WEBPACK_IMPORTED_MODULE_2__["default"])();
-(0,_mainSearch__WEBPACK_IMPORTED_MODULE_3__["default"])();
+(0,_search__WEBPACK_IMPORTED_MODULE_3__["default"])();
 })();
 
 /******/ })()

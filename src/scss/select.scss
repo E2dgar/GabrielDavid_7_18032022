@@ -85,6 +85,10 @@
           &::first-letter{
             text-transform: uppercase;
           }
+
+          &.hidden-li {
+            display: none;
+          }
         }
       }
       input {

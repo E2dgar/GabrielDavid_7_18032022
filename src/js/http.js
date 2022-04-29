@@ -5,6 +5,7 @@ import { arrayNoDuplicates } from "./services";
 const allRecipes = [];
 recipes.forEach((recipe) => allRecipes.push(new Recipe(recipe)));
 
+/*Renvoi un tableau sans doublon de tous les ingredients des recettes passées en argument*/
 const findIngredients = (recipes) => {
   let ingredients = [];
   recipes.forEach((recipe) => {
@@ -15,6 +16,7 @@ const findIngredients = (recipes) => {
   return ingredients;
 };
 
+/*Renvoi un tableau sans doublon de tous les ustensiles des recettes passées en argument*/
 const findUstensils = (recipes) => {
   let ustensiles = [];
   recipes.forEach((recipe) => {
@@ -26,6 +28,7 @@ const findUstensils = (recipes) => {
   return ustensiles;
 };
 
+/*Renvoi un tableau sans doublon de tous les appareils des recttes passées en argument*/
 const findAppliances = (recipes) => {
   let appareils = [];
   recipes.forEach((recipe) => {
@@ -36,7 +39,7 @@ const findAppliances = (recipes) => {
 };
 
 /**
- * Return array of tags existing in recipes location (ingredients, ustensiles or appareils)
+ *  Pour chaque select, renvoi un tableau des tags présent dans les recettes
  * @param {Array} recipes
  * @param {string} tag
  * @param {string} location

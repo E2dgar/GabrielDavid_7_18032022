@@ -1,11 +1,6 @@
-import selectUI from "./components/filterSelect/selectUI";
-import recipesUI from "./components/recipesUI";
-import {
-  allRecipes,
-  findIngredients,
-  findUstensils,
-  findAppliances,
-} from "./http";
+import { createSelects } from "./components/filterSelect/updateSelect";
+import refreshUiRecipes from "./components/recipesUI";
+import { allRecipes } from "./http";
 
 /**
  * Push in array only if it does not already exist
@@ -18,23 +13,11 @@ const arrayNoDuplicates = (array, item) => {
   }
 };
 
+/*Au chargement rempli les select avec les données initiales */
 const initialState = () => {
-  selectUI([
-    {
-      name: "ingredients",
-      list: findIngredients(allRecipes),
-    },
-    {
-      name: "appareils",
-      list: findAppliances(allRecipes),
-    },
-    {
-      name: "ustensiles",
-      list: findUstensils(allRecipes),
-    },
-  ]);
+  createSelects(allRecipes);
 
-  recipesUI();
+  refreshUiRecipes();
 };
 
 export { arrayNoDuplicates, initialState };

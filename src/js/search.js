@@ -1,16 +1,15 @@
 import refreshUiRecipes from "./components/recipesUI";
-import {
-  allRecipes,
-  findAppliances,
-  findIngredients,
-  findUstensils,
-} from "./http";
+import { allRecipes } from "./http";
 import { arrayNoDuplicates, initialState } from "./services";
 import domBuilder from "./domBuilder";
 import createTag from "./components/tag";
-import updateSelect from "./components/filterSelect/updateSelect";
+import {
+  updateOneSelect,
+  updateAllSelects,
+  elementsInSelect,
+} from "./components/filterSelect/updateSelect";
 
-const mainSearch = () => {
+const search = () => {
   const inputMain = document.querySelector("[name='q']");
 
   let allTags = {
@@ -20,20 +19,14 @@ const mainSearch = () => {
   };
   let mainResults = [];
 
-  const selects = {
-    ingredients: (searchIn) => findIngredients(searchIn),
-    ustensiles: (searchIn) => findUstensils(searchIn),
-    appareils: (searchIn) => findAppliances(searchIn),
-  };
-
   /**
    * @param {Array} searchedText
    */
   const searchAndUpdateResult = (searchedText) => {
+    const recipes = findRecipesByMain(searchedText);
     /*Actualisation de l'interfacce */
-    refreshUiRecipes(findRecipesByMain(searchedText));
-    /*Update selects */
-    updateAllSelects(findRecipesByMain(searchedText));
+    refreshUiRecipes(recipes);
+    updateAllSelects(recipes);
   };
 
   /*Check si il ya des tags de recherche affichés*/
@@ -52,18 +45,17 @@ const mainSearch = () => {
     let recipes = [];
     let resultsFromMain = [];
 
-    /*Si il y a des tags on prend comme tableau de recherches les recettes déjà filtrés par un ou des tags */
+    /*Si il y a des tags on prend comme tableau de recherches les recettes déjà filtrées par un ou des tags */
     if (isTag()) {
       recipes = findRecipesByTags();
     } /*Sinon on prend toutes les recettes */ else {
       recipes = allRecipes;
     }
-
     /*On boucle sur la liste recipes */
     for (let i = 0; i < recipes.length; i++) {
       let allTerms = new Array(searchedText.length);
 
-      /*On boucle sur un tableau de termes gérer une recherche à plusieurs termes */
+      /*On boucle sur un tableau de termes pour gérer une recherche à plusieurs termes */
       for (let j = 0; j < searchedText.length; j++) {
         /*Si le terme[j] est présent dans le nom de la recette on le passe à true */
         if (recipes[i].name.toLowerCase().includes(searchedText[j])) {
@@ -92,12 +84,14 @@ const mainSearch = () => {
           countPresentTerm++;
         }
       }
-      /*Si le nombre de true est égal aux nombres de termes recherchés on peut ajouter la recette au résultats*/
+      /*Si le nombre de true est égal aux nombres de termes recherchés tous les termes sont présents dan sla recette et on ajoute la recette au résultats*/
       if (allTerms.length === countPresentTerm) {
         arrayNoDuplicates(resultsFromMain, recipes[i]);
       }
     }
-
+    if (resultsFromMain.length === 1) {
+      emptySelects();
+    }
     return (mainResults = resultsFromMain);
   };
 
@@ -111,6 +105,10 @@ const mainSearch = () => {
     return searchedText[0] === "";
   };
 
+  const emptySelects = () => {
+    updateAllSelects([]);
+  };
+
   const onSearch = (e) => {
     /*La recherche est un tableau de termes pour prendre en compte plusieurs mot et boucler dessus */
     const searchedText = e.target.value.toLowerCase().split(" ");
@@ -120,10 +118,12 @@ const mainSearch = () => {
       searchAndUpdateResult(searchedText);
     }
 
+    /*Quand l'utilisateur efface les termes de la recherche principale*/
     if (reset(searchedText)) {
+      /*Si il y a des tags présents on rafraîchit les résultats avec les résultats de recherche de ces tags*/
       if (isTag()) {
         findRecipesByTags();
-      } else {
+      } /*Sinon on affiche toutes les recttes */ else {
         initialState();
       }
     }
@@ -131,79 +131,74 @@ const mainSearch = () => {
 
   inputMain.addEventListener("input", (e) => onSearch(e));
 
-  /*Recherche par tag */
- 
+  /*TAG */
 
   /**
-   * Filtre la liste des select suivant les termes recherchés
+   * Filtre la liste des select en temps réel suivant les termes recherchés
    * @param {Array} searchedTag
    * @param {string} selectType
    */
-  const onTagsSearch = (searchedTag, selectType) => {
+  const liveRefreshOptionsSelect = (searchedTag, selectType) => {
+    /*Si il a une recherche princpale d'éffectuée on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
     const currentResults = mainResults.length === 0 ? allRecipes : mainResults;
-    let ingredientsList = selects.ingredients(currentResults);
-    let appareilsList = selects.appareils(currentResults);
-    let ustensilesList = selects.ustensiles(currentResults);
+
+    /*Déclaration du tableau de tous les éléments de liste qui match avec la recherche*/
     let liInSelect = [];
 
+    /**
+     * On crée une fonction qui check si le tag est présent dans la liste d'un select
+     * @param {string} select
+     */
     const getTagsInSelect = (select) => {
       select.forEach((li) => {
+        /*On crée un tableau pour gérer une rechrche avec plusieurs termes*/
         let isInList = [];
 
+        /*Pou chaque terme de recherche */
         for (let i = 0; i < searchedTag.length; i++) {
+          /*Si le terme est présent dans un élément de liste*/
           if (li.includes(searchedTag[i])) {
+            /*On l'ajoute au tableau*/
             isInList.push(li);
           }
         }
+        /*Si le nombre de termes de la recherche est égal au nombre de terme dans le tableau c'est que tous les temres sont dans l'élement de liste, on peut ajouter l'élément au tableau de tous les éléments */
         if (searchedTag.length === isInList.length) {
           arrayNoDuplicates(liInSelect, li);
         }
       });
+      return liInSelect;
     };
 
-    let updatedList = [];
-    /*Suivant le select dans lequel on est on filtre la liste en fonction des termes recherchés */
+    /*On met à jour les élements de liste du select concerné */
     switch (selectType) {
       case "ingredients":
-        getTagsInSelect(ingredientsList);
-        updatedList = ingredientsList.filter((tag) => liInSelect.includes(tag));
+        updateOneSelect(
+          selectType,
+          getTagsInSelect(elementsInSelect.ingredients(currentResults))
+        );
         break;
       case "appareils":
-        getTagsInSelect(appareilsList);
-        updatedList = appareilsList.filter((tag) => liInSelect.includes(tag));
+        updateOneSelect(
+          selectType,
+          getTagsInSelect(elementsInSelect.appareils(currentResults))
+        );
         break;
       case "ustensiles":
-        getTagsInSelect(ustensilesList);
-        updatedList = ustensilesList.filter((tag) => liInSelect.includes(tag));
+        updateOneSelect(
+          selectType,
+          getTagsInSelect(elementsInSelect.ustensiles(currentResults))
+        );
         break;
     }
-    updateSelect(selectType, updatedList);
   };
 
-
-  /**
-   * Update all selects from an array of recipes
-   * @param {Array} results
-   */
-  const updateAllSelects = (results) => {
-    updateSelect("ingredients", selects.ingredients(results));
-    updateSelect("appareils", selects.appareils(results));
-    updateSelect("ustensiles", selects.ustensiles(results));
-  };
-
+  /*Recherhce par tags */
   const findRecipesByTags = () => {
-    let recipes = [];
-    /*Si on a déjà une recherche principale effectuée, recipes est le résultat de cette recherche*/
-    if (inputMain.value !== "") {
-      recipes = mainResults;
-    }/*Sinon recipes contient toutes les recettes*/ 
-    else {
-      recipes = allRecipes;
-    }
+    /*On prend comme base de recherche les résultas de la rechercheprincipale s'il y en a une sinon toutes les recettes*/
+    let filteredFromTags = mainResults.length > 0 ? mainResults : allRecipes;
 
-    let filteredFromTags = recipes;
-   
-    /*On filtre les résultats avec les tags présents */ 
+    /*On filtre les résultats avec les tags présents */
     if (allTags.ingredients.length > 0) {
       allTags.ingredients.forEach((tag) => {
         filteredFromTags = filteredFromTags.filter((recipe) =>
@@ -237,9 +232,13 @@ const mainSearch = () => {
       });
     }
     /*On update l'UI (recettes)  et les listes des selects*/
+
     refreshUiRecipes(filteredFromTags);
     updateAllSelects(filteredFromTags);
 
+    if (filteredFromTags.length === 1) {
+      emptySelects();
+    }
     return filteredFromTags;
   };
 
@@ -260,10 +259,11 @@ const mainSearch = () => {
       input.value = null;
     }
     if (!e.code) {
-      createTag(
-        e.target.textContent,
-        e.target.getAttribute("id").replace(/[0-9]?[0-9]/, "tag")
-      ).addEventListener("click", (e) => closeTag(e));
+      const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
+      const tag = e.target.textContent;
+      createTag(tag, select).addEventListener("click", (e) => closeTag(e));
+
+      allTags[select].push(tag.replaceAll(" ", "-"));
     }
     findRecipesByTags();
   };
@@ -282,7 +282,7 @@ const mainSearch = () => {
       findRecipesByTags();
     } else if (inputMain.value !== "") {
       searchAndUpdateResult(inputMain.value.toLowerCase().split(" "));
-    } 
+    }
   };
 
   /*Ecouteurs sur les input de tags */
@@ -293,17 +293,31 @@ const mainSearch = () => {
   ];
 
   tagsInput.forEach((tagInput) => {
+    /*Ecouteur de la saisi des tags*/
     tagInput.addEventListener("input", (e) => {
       const searchedTag = e.target.value.toLowerCase().split(" ");
       const selectType = e.target.getAttribute("name");
-      onTagsSearch(searchedTag, selectType);
+      liveRefreshOptionsSelect(searchedTag, selectType);
     });
+    /*Ecouteurs pour validation du tag Enter key*/
     tagInput.addEventListener("keydown", (e) => {
       if (e.code === "Enter") {
         onValidateTag(e, tagInput);
       }
     });
   });
+
+  /*Selects updates */
+
+  document.querySelectorAll(".combo-list li").forEach((li) => {
+    li.addEventListener("click", (li) => {
+      const selectInput = document.getElementsByName(
+        li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "")
+      )[0];
+      selectInput.value = li.target.textContent;
+      selectInput.focus();
+    });
+  });
 };
 
-export default mainSearch;
+export default search;

@@ -97,6 +97,7 @@ const refreshUiRecipes = (searchedRecipes) => {
     } else {
       quantity.textContent = element.quantity;
     }
+
     ingredient.append(quantity);
 
     return ingredient;

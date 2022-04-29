@@ -1,4 +1,4 @@
-const select = (options) => {
+const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
   const inputsCombo = document.querySelectorAll(".combo-lists input");
@@ -6,7 +6,7 @@ const select = (options) => {
   /**
    * Show the list of options
    */
-  const showList = (mainWrapper, listWrapper, button, list) => {
+  const showList = (mainWrapper, listWrapper, button) => {
     if (document.querySelector(".show")) {
       hiddenListActions();
     }
@@ -60,6 +60,7 @@ const select = (options) => {
   closeButtons.forEach((button) =>
     button.addEventListener("click", hiddenListActions)
   );
+
   inputsCombo.forEach((input) => {
     input.addEventListener("keydown", (e) => {
       if (e.code === "Enter") {
