@@ -110,6 +110,7 @@ const search = () => {
   };
 
   const onSearch = (e) => {
+    console.log(e);
     /*La recherche est un tableau de termes pour prendre en compte plusieurs mot et boucler dessus */
     const searchedText = e.target.value.toLowerCase().split(" ");
 
@@ -130,6 +131,11 @@ const search = () => {
   };
 
   inputMain.addEventListener("input", (e) => onSearch(e));
+  inputMain.addEventListener("keypress", (e) => {
+    if (e.code === "Enter") {
+      e.preventDefault();
+    }
+  });
 
   /*TAG */
 
