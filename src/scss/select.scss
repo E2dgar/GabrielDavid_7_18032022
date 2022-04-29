@@ -1,6 +1,7 @@
 .combo-lists {
   margin-top: 25px;
   display: flex;
+  flex-wrap: wrap;
   position: absolute;
   z-index: 100;
 
@@ -8,7 +9,7 @@
     width: max-content;
     border-radius: 5px;
     position: relative;
-    
+    margin-bottom: 1rem;
     margin-right: 20px;
 
     &.combo-blue {
