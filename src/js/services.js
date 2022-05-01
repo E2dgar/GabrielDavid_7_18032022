@@ -13,6 +13,17 @@ const arrayNoDuplicates = (array, item) => {
   }
 };
 
+const textToClassNameFormat = (text) => {
+  return text.replaceAll(" ", "-");
+};
+
+const textToRecipeFormat = (text) => {
+  return text.replaceAll("-", " ");
+};
+
+const toArrayInLowerCase = (text) => {
+  return text.toLowerCase().split(" ")
+}
 /*Au chargement rempli les select avec les données initiales */
 const initialState = () => {
   createSelects(allRecipes);
@@ -20,4 +31,10 @@ const initialState = () => {
   refreshUiRecipes();
 };
 
-export { arrayNoDuplicates, initialState };
+export {
+  arrayNoDuplicates,
+  textToClassNameFormat,
+  textToRecipeFormat,
+  initialState,
+  toArrayInLowerCase
+};

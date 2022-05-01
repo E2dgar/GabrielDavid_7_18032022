@@ -7,7 +7,7 @@ import { findIngredients, findUstensils, findAppliances } from "../../http";
  */
 const createSelects = (options) => {
   const selectsTypes = ["ingredients", "appareils", "ustensiles"];
-  /*On boucle sur les options pourles ajouter au select */
+  /*On boucle sur les options pour les ajouter au select */
   selectsTypes.forEach((selectType) => {
     let optionsCount = 0;
     elementsInSelect[selectType](options).forEach((option) => {
@@ -42,9 +42,9 @@ const updateOneSelect = (select, options, isTagValidated) => {
   allTagsPresents.forEach((span) => allTextTags.push(span.textContent));
 
   let liCount = 0;
-  /*if (options.length > 1) {*/
-  /*On boucle sur les li pour afficher celles contenu dans le tableau options tout en masquant la li égal au tag */
+  /*On boucle sur les li pour afficher celles contenu dans le tableau options  */
   optionsLi.forEach((li) => {
+    /*Si le tag est validé on le masque dans la liste */
     if (isTagValidated) {
       if (
         options.includes(li.textContent.toLowerCase()) &&

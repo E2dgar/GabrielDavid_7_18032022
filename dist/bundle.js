@@ -16,7 +16,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "arrayNoDuplicates": () => (/* binding */ arrayNoDuplicates),
-/* harmony export */   "initialState": () => (/* binding */ initialState)
+/* harmony export */   "initialState": () => (/* binding */ initialState),
+/* harmony export */   "textToClassNameFormat": () => (/* binding */ textToClassNameFormat),
+/* harmony export */   "textToRecipeFormat": () => (/* binding */ textToRecipeFormat)
 /* harmony export */ });
 /* harmony import */ var _components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _components_recipesUI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
@@ -34,6 +36,14 @@ const arrayNoDuplicates = (array, item) => {
   if (!array.includes(item)) {
     array.push(item);
   }
+};
+
+const textToClassNameFormat = text => {
+  return text.replaceAll(" ", "-");
+};
+
+const textToRecipeFormat = text => {
+  return text.replaceAll("-", " ");
 };
 /*Au chargement rempli les select avec les données initiales */
 
@@ -66,7 +76,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const createSelects = options => {
   const selectsTypes = ["ingredients", "appareils", "ustensiles"];
-  /*On boucle sur les options pourles ajouter au select */
+  /*On boucle sur les options pour les ajouter au select */
 
   selectsTypes.forEach(selectType => {
     let optionsCount = 0;
@@ -101,11 +111,10 @@ const updateOneSelect = (select, options, isTagValidated) => {
   const allTextTags = [];
   allTagsPresents.forEach(span => allTextTags.push(span.textContent));
   let liCount = 0;
-  /*if (options.length > 1) {*/
-
-  /*On boucle sur les li pour afficher celles contenu dans le tableau options tout en masquant la li égal au tag */
+  /*On boucle sur les li pour afficher celles contenu dans le tableau options  */
 
   optionsLi.forEach(li => {
+    /*Si le tag est validé on le masque dans la liste */
     if (isTagValidated) {
       if (options.includes(li.textContent.toLowerCase()) && !allTextTags.includes(li.textContent)) {
         li.classList.remove("hidden-li");
@@ -1902,12 +1911,13 @@ const search = () => {
     ustensiles: []
   };
   let mainResults = [];
+  let resultsByTags = [];
   /**
    * @param {Array} searchedText
    */
 
   const searchAndUpdateResult = searchedText => {
-    const recipes = findRecipesByMain(searchedText);
+    const recipes = findRecipesByMain(searchedText, resultsByTags);
     /*Actualisation de l'interfacce */
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(recipes);
@@ -1921,23 +1931,20 @@ const search = () => {
       return true;
     }
   };
-  /*Return un array de recipes filtré avec la recherche principale */
+  /**
+   * Return un array de recipes filtrées avec la recherche principale
+   * @param {Array} searchedText
+   * @returns
+   */
 
 
-  const findRecipesByMain = searchedText => {
-    let recipes = [];
-    let resultsFromMain = [];
-    /*Si il y a des tags on prend comme tableau de recherches les recettes déjà filtrées par un ou des tags */
+  const findRecipesByMain = (searchedText, resultsByTags) => {
+    let recipes = resultsByTags?.length > 0 ? resultsByTags : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+    console.log("recipes", recipes);
+    /* let resultsFromMain = [];*/
 
-    if (isTag()) {
-      recipes = findRecipesByTags();
-    }
-    /*Sinon on prend toutes les recettes */
-    else {
-      recipes = _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
-    }
+    mainResults = [];
     /*On boucle sur la liste recipes */
-
 
     for (let i = 0; i < recipes.length; i++) {
       let allTerms = new Array(searchedText.length);
@@ -1977,15 +1984,15 @@ const search = () => {
 
 
       if (allTerms.length === countPresentTerm) {
-        (0,_services__WEBPACK_IMPORTED_MODULE_2__.arrayNoDuplicates)(resultsFromMain, recipes[i]);
+        (0,_services__WEBPACK_IMPORTED_MODULE_2__.arrayNoDuplicates)(mainResults, recipes[i]);
       }
     }
 
-    if (resultsFromMain.length === 1) {
+    if (mainResults.length === 1) {
       emptySelects();
     }
 
-    return mainResults = resultsFromMain;
+    return mainResults;
   };
   /*La recherche ne se déclenche qu'à partir de 3 chars saisis */
 
@@ -2016,12 +2023,15 @@ const search = () => {
 
 
     if (reset(searchedText)) {
+      mainResults = [];
       /*Si il y a des tags présents on rafraîchit les résultats avec les résultats de recherche de ces tags*/
+
       if (isTag()) {
-        findRecipesByTags();
+        findRecipesByTags(_http__WEBPACK_IMPORTED_MODULE_1__.allRecipes);
       }
-      /*Sinon on affiche toutes les recttes */
+      /*Sinon on refresh toutes les recttes */
       else {
+        (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(_http__WEBPACK_IMPORTED_MODULE_1__.allRecipes);
         (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(_http__WEBPACK_IMPORTED_MODULE_1__.allRecipes);
       }
     }
@@ -2091,29 +2101,30 @@ const search = () => {
         break;
     }
   };
-  /*Recherhce par tags */
+  /*Recherche par tags */
 
 
-  const findRecipesByTags = () => {
+  const findRecipesByTags = currentResults => {
     /*On prend comme base de recherche les résultas de la rechercheprincipale s'il y en a une sinon toutes les recettes*/
-    let filteredFromTags = mainResults.length > 0 ? mainResults : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+    let filteredFromTags = currentResults?.length > 0 ? currentResults : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+    console.log("recet", filteredFromTags);
     /*On filtre les résultats avec les tags présents */
 
     if (allTags.ingredients.length > 0) {
       allTags.ingredients.forEach(tag => {
-        filteredFromTags = filteredFromTags.filter(recipe => recipe.containsText(tag.replaceAll("-", " "), recipe.searchInIngredients));
+        filteredFromTags = filteredFromTags.filter(recipe => recipe.containsText((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToRecipeFormat)(tag), recipe.searchInIngredients));
       });
     }
 
     if (allTags.appareils.length > 0) {
       allTags.appareils.forEach(tag => {
-        filteredFromTags = filteredFromTags.filter(recipe => recipe.containsText(tag.replaceAll("-", " "), recipe.searchInAppareils));
+        filteredFromTags = filteredFromTags.filter(recipe => recipe.containsText((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToRecipeFormat)(tag), recipe.searchInAppareils));
       });
     }
 
     if (allTags.ustensiles.length > 0) {
       allTags.ustensiles.forEach(tag => {
-        filteredFromTags = filteredFromTags.filter(recipe => recipe.containsText(tag.replaceAll("-", " "), recipe.searchInUstensiles));
+        filteredFromTags = filteredFromTags.filter(recipe => recipe.containsText((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToRecipeFormat)(tag), recipe.searchInUstensiles));
       });
     }
     /*On update l'UI (recettes)  et les listes des selects*/
@@ -2123,11 +2134,14 @@ const search = () => {
     /*True en 2eme param pour supprimer de la liste du select le tag ajouté à la validation du tag */
 
     (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(filteredFromTags, true);
+    /*S'il n'y a plus qu'une recette sur l'interface on vide les selects*/
 
     if (filteredFromTags.length === 1) {
       emptySelects();
     }
 
+    resultsByTags = filteredFromTags;
+    console.log(resultsByTags);
     return filteredFromTags;
   };
   /*Déclenche la recherche par tag quand un tag est validé */
@@ -2138,7 +2152,7 @@ const search = () => {
       e.preventDefault();
       const select = input.getAttribute("name");
       (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(input.value, select).addEventListener("click", e => closeTag(e));
-      allTags[input.getAttribute("name")].push(input.value.replaceAll(" ", "-"));
+      allTags[input.getAttribute("name")].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(input.value));
       input.value = null;
     }
 
@@ -2146,10 +2160,10 @@ const search = () => {
       const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
       const tag = e.target.textContent;
       (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(tag, select).addEventListener("click", e => closeTag(e));
-      allTags[select].push(tag.replaceAll(" ", "-"));
+      allTags[select].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(tag));
     }
 
-    findRecipesByTags();
+    findRecipesByTags(mainResults);
   };
   /*A la fermeture d'un tag on supprime le tag de l'interface et du tableau des tags et on update les listes des selects */
 
@@ -2159,12 +2173,16 @@ const search = () => {
     const tag = e.currentTarget.getAttribute("data-tag");
     document.querySelector(`.tag-${tag}`).remove();
     allTags[select] = allTags[select].filter(value => value !== tag);
-    console.log(allTags);
 
     if (isTag()) {
-      findRecipesByTags();
+      findRecipesByTags(findRecipesByMain(inputMain.value.toLowerCase().split(" ")));
     } else if (inputMain.value !== "") {
+      resultsByTags = [];
       searchAndUpdateResult(inputMain.value.toLowerCase().split(" "));
+    } else {
+      resultsByTags = [];
+      (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(_http__WEBPACK_IMPORTED_MODULE_1__.allRecipes);
+      (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(_http__WEBPACK_IMPORTED_MODULE_1__.allRecipes);
     }
   };
   /*Ecouteurs sur les input de tags */
@@ -2192,7 +2210,9 @@ const search = () => {
     li.addEventListener("click", li => {
       const selectInput = document.getElementsByName(li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, ""))[0];
       selectInput.value = li.target.textContent;
-      selectInput.focus();
+      selectInput.dispatchEvent(new KeyboardEvent("keydown", {
+        code: "Enter"
+      }));
     });
   });
 };
