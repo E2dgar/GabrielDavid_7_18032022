@@ -22,8 +22,8 @@ const textToRecipeFormat = (text) => {
 };
 
 const toArrayInLowerCase = (text) => {
-  return text.toLowerCase().split(" ")
-}
+  return text.toLowerCase().split(" ");
+};
 /*Au chargement rempli les select avec les données initiales */
 const initialState = () => {
   createSelects(allRecipes);
@@ -36,5 +36,5 @@ export {
   textToClassNameFormat,
   textToRecipeFormat,
   initialState,
-  toArrayInLowerCase
+  toArrayInLowerCase,
 };

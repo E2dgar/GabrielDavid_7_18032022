@@ -4,7 +4,7 @@ import {
   arrayNoDuplicates,
   textToClassNameFormat,
   textToRecipeFormat,
-  toArrayInLowerCase
+  toArrayInLowerCase,
 } from "./services";
 import domBuilder from "./domBuilder";
 import createTag from "./components/tag";
@@ -52,53 +52,22 @@ const search = () => {
    * @returns
    */
   const findRecipesByMain = (searchedText, resultsByTags) => {
-    /*On prend comme base de recherche la rechrche par tag s'il elle existe sion toutes les recettes*/
-    let recipes = resultsByTags?.length > 0 ? resultsByTags : allRecipes;
-   /*Init du tabelau de résultast dans lequel on va push les rectees */
-    mainResults = [];
+    /*On prend comme base de recherche la recherche par tag s'il elle existe sinon toutes les recettes*/
+    mainResults = resultsByTags?.length > 0 ? resultsByTags : allRecipes;
 
-    /*On boucle sur la liste recipes */
-    for (let i = 0; i < recipes.length; i++) {
-      let allTerms = new Array(searchedText.length);
+    /*On filtre les recettes pour chaque terme de recherche */
 
-      /*On boucle sur un tableau de termes pour gérer une recherche à plusieurs termes */
-      for (let j = 0; j < searchedText.length; j++) {
-        /*Si le terme[j] est présent dans le nom de la recette on le passe à true */
-        if (recipes[i].name.toLowerCase().includes(searchedText[j])) {
-          allTerms[j] = true;
-        }
-        /*Si le terme[j] est présent dans la description on le passe à true */
-        if (recipes[i].description.toLowerCase().includes(searchedText[j])) {
-          allTerms[j] = true;
-        }
-        /*Si le terme[j] est présent dans la liste des ingrédients de la recette on le passe à true */
-        for (let k = 0; k < recipes[i].ingredients.length; k++) {
-          if (
-            recipes[i].ingredients[k].ingredient
-              .toLowerCase()
-              .includes(searchedText[j])
-          ) {
-            allTerms[j] = true;
-          }
-        }
-      }
+    searchedText.forEach((text) => {
+      mainResults = mainResults.filter((recipe) =>
+        recipe.containsText(text, recipe.initialSearch)
+      );
+    });
 
-      /*On compte le nombre de terms égal à true */
-      let countPresentTerm = 0;
-      for (let k = 0; k < allTerms.length; k++) {
-        if (allTerms[k]) {
-          countPresentTerm++;
-        }
-      }
-      /*Si le nombre de true est égal aux nombres de termes recherchés tous les termes sont présents dan sla recette et on ajoute la recette au résultats*/
-      if (allTerms.length === countPresentTerm) {
-        arrayNoDuplicates(mainResults, recipes[i]);
-      }
-    }
     /*Si il n'y a qu'une seulle recette dans l'UI on vide les selects */
     if (mainResults.length === 1) {
       emptySelects();
     }
+
     return mainResults;
   };
 
@@ -146,7 +115,7 @@ const search = () => {
     }
   });
 
-  /*TAG */
+  /*TAGS */
 
   /**
    * Filtre la liste des select en temps réel suivant les termes recherchés
@@ -155,7 +124,7 @@ const search = () => {
    */
   const liveRefreshOptionsSelect = (searchedTag, selectType) => {
     /*Si il a une recherche princpale d'éffectuée on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
-    const currentResults = allRecipes;
+    const currentResults = mainResults.length > 0 ? mainResults : allRecipes;
     /*Init tableau de tous les éléments de liste qui match avec la recherche*/
     let liInSelect = [];
 
@@ -165,7 +134,7 @@ const search = () => {
      */
     const getTagsInSelect = (select) => {
       select.forEach((li) => {
-        /*On crée un tableau pour gérer une rechrche avec plusieurs termes*/
+        /*Init d'un tableau pour gérer une recherche avec plusieurs termes*/
         let isInList = [];
 
         /*Pou chaque terme de recherche */
@@ -176,7 +145,7 @@ const search = () => {
             isInList.push(li);
           }
         }
-        /*Si le nombre de termes de la recherche est égal au nombre de terme dans le tableau c'est que tous les temres sont dans l'élement de liste, on peut ajouter l'élément au tableau de tous les éléments */
+        /*Si le nombre de termes de la recherche est égal au nombre de terme dans le tableau c'est que tous les termes sont dans l'élement de liste, on peut ajouter l'élément au tableau de tous les éléments */
         if (searchedTag.length === isInList.length) {
           arrayNoDuplicates(liInSelect, li);
         }
@@ -209,9 +178,13 @@ const search = () => {
 
   /*Recherche par tags */
   const findRecipesByTags = (currentResults) => {
-    /*On prend comme base de recherche les résultas de la rechercheprincipale s'il y en a une sinon toutes les recettes*/
+    /*On prend comme base de recherche les résultas de la recherche principale s'il y en a une sinon toutes les recettes*/
     let filteredFromTags =
-      currentResults?.length > 0 ? currentResults : allRecipes;
+      currentResults?.length > 0
+        ? currentResults
+        : mainResults.length > 0
+        ? mainResults
+        : allRecipes;
 
     /*On filtre les résultats avec les tags présents */
     if (allTags.ingredients.length > 0) {
@@ -295,9 +268,7 @@ const search = () => {
     allTags[select] = allTags[select].filter((value) => value !== tag);
 
     if (isTag()) {
-      findRecipesByTags(
-        findRecipesByMain(toArrayInLowerCase(inputMain.value))
-      );
+      findRecipesByTags(findRecipesByMain(toArrayInLowerCase(inputMain.value)));
     } else if (inputMain.value !== "") {
       resultsByTags = [];
       searchAndUpdateResult(toArrayInLowerCase(inputMain.value));
