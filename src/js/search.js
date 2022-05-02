@@ -32,7 +32,13 @@ const search = () => {
     const recipes = findRecipesByMain(searchedText, resultsByTags);
     /*Actualisation de l'interfacce */
     refreshUiRecipes(recipes);
-    updateAllSelects(recipes);
+    console.log(recipes);
+    /*Si il n'y a qu'une seule recette dans l'UI on vide les selects */
+    if (recipes.length === 1) {
+      emptySelects();
+    } else {
+      updateAllSelects(recipes);
+    }
   };
 
   /*Check si il ya des tags de recherche affichés*/
@@ -65,11 +71,6 @@ const search = () => {
           recipe.searchInIngredients.includes(text)
       );
     });
-
-    /*Si il n'y a qu'une seulle recette dans l'UI on vide les selects */
-    if (mainResults.length === 1) {
-      emptySelects();
-    }
 
     return mainResults;
   };
