@@ -101,7 +101,7 @@
           grid-template-columns: repeat(1, 250px);
         }
         @media screen and(max-width: 768px) {
-          grid-template-columns: repeat(3, 33%);
+          grid-template-columns: repeat(3, 30%);
         }
         @media screen and(max-width: 598px) {
           grid-template-columns: repeat(2, 50%);
