@@ -15,6 +15,10 @@
       width: 100%;
       padding-left: 1rem;
       font-size: $f18;
+      @media screen and(max-width: 598px) {
+        font-size: $f16;
+        padding-left: .5rem;
+      }
 
       &::placeholder {
         opacity: .35;

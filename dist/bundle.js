@@ -1957,7 +1957,6 @@ const search = () => {
       emptySelects();
     }
 
-    console.log("in searfhc", mainResults);
     return mainResults;
   };
   /*La recherche ne se déclenche qu'à partir de 3 chars saisis */
@@ -2011,7 +2010,7 @@ const search = () => {
       e.preventDefault();
     }
   });
-  /*TAG */
+  /*TAGS */
 
   /**
    * Filtre la liste des select en temps réel suivant les termes recherchés
@@ -2032,7 +2031,7 @@ const search = () => {
 
     const getTagsInSelect = select => {
       select.forEach(li => {
-        /*On crée un tableau pour gérer une rechrche avec plusieurs termes*/
+        /*Init d'un tableau pour gérer une recherche avec plusieurs termes*/
         let isInList = [];
         /*Pou chaque terme de recherche */
 
@@ -2043,7 +2042,7 @@ const search = () => {
             isInList.push(li);
           }
         }
-        /*Si le nombre de termes de la recherche est égal au nombre de terme dans le tableau c'est que tous les temres sont dans l'élement de liste, on peut ajouter l'élément au tableau de tous les éléments */
+        /*Si le nombre de termes de la recherche est égal au nombre de terme dans le tableau c'est que tous les termes sont dans l'élement de liste, on peut ajouter l'élément au tableau de tous les éléments */
 
 
         if (searchedTag.length === isInList.length) {
@@ -2075,7 +2074,6 @@ const search = () => {
   const findRecipesByTags = currentResults => {
     /*On prend comme base de recherche les résultas de la recherche principale s'il y en a une sinon toutes les recettes*/
     let filteredFromTags = currentResults?.length > 0 ? currentResults : mainResults.length > 0 ? mainResults : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
-    console.log(filteredFromTags);
     /*On filtre les résultats avec les tags présents */
 
     if (allTags.ingredients.length > 0) {

@@ -4,6 +4,13 @@
   flex-wrap: wrap;
   position: absolute;
   z-index: 100;
+  @media screen and(max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    left: 1rem;
+    right: 1rem;
+    margin-top: 0;
+  }
 
   .combo-box {
     width: max-content;
@@ -11,6 +18,9 @@
     position: relative;
     margin-bottom: 1rem;
     margin-right: 20px;
+    @media screen and(max-width: 768px) {
+      width: 100%;
+    }
 
     &.combo-blue {
 
@@ -52,8 +62,12 @@
       font-weight: bold;
       position: relative;
       cursor: pointer;
+      @media screen and(max-width: 1200px) {
+        
+        width: 100%;
+      }
 
-      &::after{
+      &.list-button::after{
         content: "";
         position: absolute;
         top: calc(50% - 5px);
@@ -61,6 +75,9 @@
         width: 16px;
         height: 11px;
         background: url('/assets/img/downArrow.png');
+      }
+      &[aria-expanded="true"]:after {
+        display:none;
       }
     }
 
@@ -76,12 +93,31 @@
         list-style: none;
         padding: 1rem 1.2rem;
         margin: 1rem 0 0;
+
+        @media screen and(max-width: 1200px) {
+          grid-template-columns: repeat(2, 200px);
+        }
+        @media screen and(max-width: 990px) {
+          grid-template-columns: repeat(1, 250px);
+        }
+        @media screen and(max-width: 768px) {
+          grid-template-columns: repeat(3, 33%);
+        }
+        @media screen and(max-width: 598px) {
+          grid-template-columns: repeat(2, 50%);
+        }
+        @media screen and(max-width: 478px) {
+          grid-template-columns: repeat(1, 100%);
+        }
   
         li {
           margin: 5px 0;
           font-size: $f18;
           color: $white;
           cursor: pointer;
+          @media screen and(max-width: 1200px) {
+            font-size: $f16;
+          }
   
           &::first-letter{
             text-transform: uppercase;
@@ -101,6 +137,11 @@
         left: 15px;
         padding: 1rem 1rem 1rem 8px;
         width: 80%;
+
+        @media screen and(max-width: 1200px) {
+          font-size: $f16;
+          padding-right: 0;
+        }
   
         &::placeholder {
           color: $white;
@@ -116,11 +157,13 @@
         background: none;
         position: absolute;
         top: -30px;
-        right: -48px;
+        right: -15px;
         width: 48px;
         height: 48px;
         background: url('/assets/img/upArrow.png') no-repeat;
+        padding: 0 14px;
       }
+      
     }
     .hidden {
       display: none;
