@@ -2072,7 +2072,7 @@ const search = () => {
 
 
   const findRecipesByTags = currentResults => {
-    /*On prend comme base de recherche les résultas de la recherche principale s'il y en a une sinon toutes les recettes*/
+    /*On prend comme base de recherche les résultats passé en parma, sinon résultats de la recherche principale, sinon toutes les recettes*/
     let filteredFromTags = currentResults?.length > 0 ? currentResults : mainResults.length > 0 ? mainResults : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
     /*On filtre les résultats avec les tags présents */
 

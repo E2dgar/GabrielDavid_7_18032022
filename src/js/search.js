@@ -178,7 +178,7 @@ const search = () => {
 
   /*Recherche par tags */
   const findRecipesByTags = (currentResults) => {
-    /*On prend comme base de recherche les résultas de la recherche principale s'il y en a une sinon toutes les recettes*/
+    /*On prend comme base de recherche les résultats passé en parma, sinon résultats de la recherche principale, sinon toutes les recettes*/
     let filteredFromTags =
       currentResults?.length > 0
         ? currentResults
@@ -216,8 +216,8 @@ const search = () => {
         );
       });
     }
-    /*On update l'UI (recettes)  et les listes des selects*/
 
+    /*On update l'UI (recettes)  et les listes des selects*/
     refreshUiRecipes(filteredFromTags);
     /*True en 2eme param pour supprimer de la liste du select le tag ajouté à la validation du tag */
     updateAllSelects(filteredFromTags, true);
