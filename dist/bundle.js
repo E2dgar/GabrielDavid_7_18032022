@@ -800,7 +800,7 @@ const recipes = [{
   ustensils: ["couteau", "verres", "presse citron"]
 }, {
   id: 20,
-  name: "Pates Carbonara",
+  name: "Pâtes Carbonara",
   servings: 5,
   ingredients: [{
     ingredient: "Tagliatelles",
@@ -824,7 +824,7 @@ const recipes = [{
     unit: "cuillères à soupe"
   }],
   time: 30,
-  description: "Faire cuire les pates comme indiqué sur le paquet. Dorer les lardons dans une sauteuse avec l'huile d'olive. Ajouter la crême fraiche et baisser le feu au minimum. Quand les Tagliatelles sont prêtes les mettre dans la sauteuse et bien mélanger le tout en ajoutant le jaune d'oeuf. Servir et ajouter le parmesan râpé.",
+  description: "Faire cuire les pâtes comme indiqué sur le paquet. Dorer les lardons dans une sauteuse avec l'huile d'olive. Ajouter la crême fraiche et baisser le feu au minimum. Quand les Tagliatelles sont prêtes les mettre dans la sauteuse et bien mélanger le tout en ajoutant le jaune d'oeuf. Servir et ajouter le parmesan râpé.",
   appliance: "Sauteuse",
   ustensils: ["râpe à fromage", "cuillère en bois"]
 }, {
