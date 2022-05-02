@@ -1926,7 +1926,13 @@ const search = () => {
     /*Actualisation de l'interfacce */
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(recipes);
-    (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(recipes);
+    /*Si il n'y a qu'une seule recette dans l'UI on vide les selects */
+
+    if (recipes.length === 1) {
+      emptySelects();
+    } else {
+      (0,_components_filterSelect_updateSelect__WEBPACK_IMPORTED_MODULE_5__.updateAllSelects)(recipes);
+    }
   };
   /*Check si il ya des tags de recherche affichés*/
 
@@ -1949,14 +1955,8 @@ const search = () => {
     /*On filtre les recettes pour chaque terme de recherche */
 
     searchedText.forEach(text => {
-      mainResults = mainResults.filter(recipe => recipe.containsText(text, recipe.initialSearch));
+      mainResults = mainResults.filter(recipe => recipe.name.toLowerCase().includes(text) || recipe.description.toLowerCase().includes(text) || recipe.searchInIngredients.includes(text));
     });
-    /*Si il n'y a qu'une seulle recette dans l'UI on vide les selects */
-
-    if (mainResults.length === 1) {
-      emptySelects();
-    }
-
     return mainResults;
   };
   /*La recherche ne se déclenche qu'à partir de 3 chars saisis */
