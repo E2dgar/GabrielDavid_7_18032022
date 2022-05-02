@@ -17,16 +17,17 @@ const select = () => {
 
   buttons.forEach((button) => {
     const mainWrapper = document.querySelector(
-      `.combo-${button.getAttribute("aria-haspopup").replace("-list", "")}`
+      `.combo-${button.getAttribute("id").replace("-button", "")}`
     );
 
     const listWrapper = document.querySelector(
-      `.${button.getAttribute("aria-haspopup")}-wrapper`
+      `.${button.getAttribute("id").replace("-button", "")}-list-wrapper`
     );
 
     const list = document.querySelector(
-      `.${button.getAttribute("aria-haspopup")}`
+      `.${button.getAttribute("id").replace("button", "list")}`
     );
+
     button.addEventListener("click", () => {
       showList(mainWrapper, listWrapper, button, list);
     });
