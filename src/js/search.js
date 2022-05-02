@@ -58,8 +58,11 @@ const search = () => {
     /*On filtre les recettes pour chaque terme de recherche */
 
     searchedText.forEach((text) => {
-      mainResults = mainResults.filter((recipe) =>
-        recipe.containsText(text, recipe.initialSearch)
+      mainResults = mainResults.filter(
+        (recipe) =>
+          recipe.name.toLowerCase().includes(text) ||
+          recipe.description.toLowerCase().includes(text) ||
+          recipe.searchInIngredients.includes(text)
       );
     });
 

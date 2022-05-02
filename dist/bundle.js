@@ -1676,12 +1676,6 @@ class Recipe {
   get searchInAppareils() {
     return [this.appareils].join().toLowerCase();
   }
-  /*Récupère le nom, la description et les ingrédients d'une recette sous la forme d'une chaîne de caractères */
-
-
-  get initialSearch() {
-    return [this.name, this.description, this.searchInIngredients].join().toLowerCase();
-  }
   /**
    * Test si une string est présente dans une chaîne de caractères
    * @param {string} text
@@ -1949,7 +1943,7 @@ const search = () => {
     /*On filtre les recettes pour chaque terme de recherche */
 
     searchedText.forEach(text => {
-      mainResults = mainResults.filter(recipe => recipe.containsText(text, recipe.initialSearch));
+      mainResults = mainResults.filter(recipe => recipe.name.toLowerCase().includes(text) || recipe.description.toLowerCase().includes(text) || recipe.searchInIngredients.includes(text));
     });
     /*Si il n'y a qu'une seulle recette dans l'UI on vide les selects */
 

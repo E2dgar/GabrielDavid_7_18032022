@@ -24,13 +24,6 @@ class Recipe {
     return [this.appareils].join().toLowerCase();
   }
 
-  /*Récupère le nom, la description et les ingrédients d'une recette sous la forme d'une chaîne de caractères */
-  get initialSearch() {
-    return [this.name, this.description, this.searchInIngredients]
-      .join()
-      .toLowerCase();
-  }
-
   /**
    * Test si une string est présente dans une chaîne de caractères
    * @param {string} text
