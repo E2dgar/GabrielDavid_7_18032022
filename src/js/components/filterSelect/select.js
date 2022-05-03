@@ -1,7 +1,7 @@
 const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
-  const inputsCombo = document.querySelectorAll(".combo-lists input");
+  const selectsLi = document.querySelectorAll(".combo-list li");
 
   /**
    * Show the list of options
@@ -49,8 +49,8 @@ const select = () => {
   const hideList = (e) => {
     if (
       !document.querySelector(".show") ||
-      e.target.closest("div")?.classList.contains("combo-box") ||
-      e.target.closest("div")?.classList.contains("list-wrapper")
+      e.target.classList.contains("list-input") ||
+      e.target.classList.contains("list-button")
     ) {
       return;
     }

@@ -115,7 +115,6 @@ const updateOneSelect = (select, options, isTagValidated) => {
   const allTagsPresents = document.querySelectorAll(".tag span");
   const allTextTags = [];
   allTagsPresents.forEach(span => allTextTags.push(span.textContent));
-  let liCount = 0;
   /*On boucle sur les li pour afficher celles contenu dans le tableau options  */
 
   optionsLi.forEach(li => {
@@ -123,21 +122,13 @@ const updateOneSelect = (select, options, isTagValidated) => {
     if (isTagValidated) {
       if (options.includes(li.textContent.toLowerCase()) && !allTextTags.includes(li.textContent)) {
         li.classList.remove("hidden-li");
-        liCount++;
       }
     } else {
       if (options.includes(li.textContent.toLowerCase())) {
         li.classList.remove("hidden-li");
-        liCount++;
       }
     }
   });
-
-  if (liCount === 0) {
-    document.querySelector(`[name=${select}]`).setAttribute("disabled", true);
-  } else {
-    document.querySelector(`[name=${select}]`).removeAttribute("disabled");
-  }
 };
 /*Objet retournant pour chaque select le tableau de ses éléments de liste*/
 
@@ -1724,7 +1715,7 @@ const refreshUiRecipes = searchedRecipes => {
     } else {
       const noResults = document.createElement("p");
       noResults.className = "no-results";
-      noResults.textContent = "Aucune recette pour cette recherche";
+      noResults.textContent = 'Aucune recette ne correspond à votre critère...vous pouvez cherchez "tarte aux pommes", "possion", etc.';
       document.querySelector(".recettes").append(noResults);
       return;
     }
@@ -1826,7 +1817,7 @@ __webpack_require__.r(__webpack_exports__);
 const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
-  const inputsCombo = document.querySelectorAll(".combo-lists input");
+  const selectsLi = document.querySelectorAll(".combo-list li");
   /**
    * Show the list of options
    */
@@ -1861,7 +1852,7 @@ const select = () => {
   };
 
   const hideList = e => {
-    if (!document.querySelector(".show") || e.target.closest("div")?.classList.contains("combo-box") || e.target.closest("div")?.classList.contains("list-wrapper")) {
+    if (!document.querySelector(".show") || e.target.classList.contains("list-input") || e.target.classList.contains("list-button")) {
       return;
     }
 
@@ -1920,7 +1911,6 @@ const search = () => {
     /*Actualisation de l'interfacce */
 
     (0,_components_recipesUI__WEBPACK_IMPORTED_MODULE_0__["default"])(recipes);
-    console.log(recipes);
     /*Si il n'y a qu'une seule recette dans l'UI on vide les selects */
 
     if (recipes.length === 1) {
@@ -1935,6 +1925,8 @@ const search = () => {
   const isTag = () => {
     if (allTags.ingredients.length > 0 || allTags.appareils.length > 0 || allTags.ustensiles.length > 0) {
       return true;
+    } else {
+      return false;
     }
   };
   /**
@@ -2110,23 +2102,17 @@ const search = () => {
 
 
   const onValidateTag = (e, input) => {
-    if (e.code === "Enter") {
-      e.preventDefault();
-      const select = input.getAttribute("name");
-      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(input.value, select).addEventListener("click", e => closeTag(e));
-      /*Update de l'objet qui conteinet tous les tags de l'UI*/
+    const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
+    const tag = e.target.textContent;
+    /*On crée le tag*/
 
-      allTags[input.getAttribute("name")].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(input.value));
-      input.value = null;
-    }
+    (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(tag, select).addEventListener("click", e => closeTag(e));
+    /*On reset l'input*/
 
-    if (!e.code) {
-      const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
-      const tag = e.target.textContent;
-      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(tag, select).addEventListener("click", e => closeTag(e));
-      allTags[select].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(tag));
-    }
+    document.querySelector(`[name="${select}"]`).value = "";
+    /*On met à jour le tableau des tags*/
 
+    allTags[select].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(tag));
     findRecipesByTags(mainResults);
   };
   /*A la fermeture d'un tag on supprime le tag de l'interface et du tableau des tags et on update les listes des selects */
@@ -2160,24 +2146,11 @@ const search = () => {
       const selectType = e.target.getAttribute("name");
       liveRefreshOptionsSelect(searchedTag, selectType);
     });
-    /*Ecouteurs pour validation du tag Enter key*/
-
-    tagInput.addEventListener("keydown", e => {
-      if (e.code === "Enter") {
-        onValidateTag(e, tagInput);
-      }
-    });
   });
   /*Selects updates */
 
   document.querySelectorAll(".combo-list li").forEach(li => {
-    li.addEventListener("click", li => {
-      const selectInput = document.getElementsByName(li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, ""))[0];
-      selectInput.value = li.target.textContent;
-      selectInput.dispatchEvent(new KeyboardEvent("keydown", {
-        code: "Enter"
-      }));
-    });
+    li.addEventListener("click", li => onValidateTag(li));
   });
 };
 

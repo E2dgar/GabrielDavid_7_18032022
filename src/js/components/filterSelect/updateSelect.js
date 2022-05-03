@@ -41,7 +41,6 @@ const updateOneSelect = (select, options, isTagValidated) => {
   const allTextTags = [];
   allTagsPresents.forEach((span) => allTextTags.push(span.textContent));
 
-  let liCount = 0;
   /*On boucle sur les li pour afficher celles contenu dans le tableau options  */
   optionsLi.forEach((li) => {
     /*Si le tag est validé on le masque dans la liste */
@@ -51,20 +50,13 @@ const updateOneSelect = (select, options, isTagValidated) => {
         !allTextTags.includes(li.textContent)
       ) {
         li.classList.remove("hidden-li");
-        liCount++;
       }
     } else {
       if (options.includes(li.textContent.toLowerCase())) {
         li.classList.remove("hidden-li");
-        liCount++;
       }
     }
   });
-  if (liCount === 0) {
-    document.querySelector(`[name=${select}]`).setAttribute("disabled", true);
-  } else {
-    document.querySelector(`[name=${select}]`).removeAttribute("disabled");
-  }
 };
 
 /*Objet retournant pour chaque select le tableau de ses éléments de liste*/
