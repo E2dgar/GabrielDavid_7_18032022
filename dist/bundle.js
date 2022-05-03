@@ -132,12 +132,6 @@ const updateOneSelect = (select, options, isTagValidated) => {
       }
     }
   });
-
-  if (liCount === 0) {
-    document.querySelector(`[name=${select}]`).setAttribute("disabled", true);
-  } else {
-    document.querySelector(`[name=${select}]`).removeAttribute("disabled");
-  }
 };
 /*Objet retournant pour chaque select le tableau de ses éléments de liste*/
 
@@ -1832,7 +1826,7 @@ __webpack_require__.r(__webpack_exports__);
 const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
-  const inputsCombo = document.querySelectorAll(".combo-lists input");
+  const selectsLi = document.querySelectorAll(".combo-list li");
   /**
    * Show the list of options
    */
@@ -1860,6 +1854,7 @@ const select = () => {
    */
 
   const hiddenListActions = () => {
+    console.log("ici");
     document.querySelector(".show .combo-list").classList.add("hidden");
     document.querySelector(".show .list-wrapper").classList.add("hidden");
     document.querySelector(".show .list-button").removeAttribute("aria-expanded");
@@ -1867,7 +1862,7 @@ const select = () => {
   };
 
   const hideList = e => {
-    if (!document.querySelector(".show") || e.target.closest("div")?.classList.contains("combo-box") || e.target.closest("div")?.classList.contains("list-wrapper")) {
+    if (!document.querySelector(".show") || e.target.classList.contains("list-input") || e.target.classList.contains("list-button")) {
       return;
     }
 
@@ -1876,13 +1871,6 @@ const select = () => {
 
   document.addEventListener("click", e => hideList(e));
   closeButtons.forEach(button => button.addEventListener("click", hiddenListActions));
-  inputsCombo.forEach(input => {
-    input.addEventListener("keydown", e => {
-      if (e.code === "Enter") {
-        hiddenListActions();
-      }
-    });
-  });
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (select);
@@ -1940,6 +1928,8 @@ const search = () => {
   const isTag = () => {
     if (allTags.ingredients.length > 0 || allTags.appareils.length > 0 || allTags.ustensiles.length > 0) {
       return true;
+    } else {
+      return false;
     }
   };
   /**
@@ -2051,8 +2041,9 @@ const search = () => {
       });
       return liInSelect;
     };
-    /*On met à jour les élements de liste du select concerné */
 
+    console.log("tag", isTag());
+    /*On met à jour les élements de liste du select concerné */
 
     switch (selectType) {
       case "ingredients":
@@ -2114,24 +2105,11 @@ const search = () => {
   /*Déclenche la recherche par tag quand un tag est validé */
 
 
-  const onValidateTag = (e, input) => {
-    if (e.code === "Enter") {
-      e.preventDefault();
-      const select = input.getAttribute("name");
-      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(input.value, select).addEventListener("click", e => closeTag(e));
-      /*Update de l'objet qui conteinet tous les tags de l'UI*/
-
-      allTags[input.getAttribute("name")].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(input.value));
-      input.value = null;
-    }
-
-    if (!e.code) {
-      const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
-      const tag = e.target.textContent;
-      (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(tag, select).addEventListener("click", e => closeTag(e));
-      allTags[select].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(tag));
-    }
-
+  const onValidateTag = e => {
+    const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
+    const tag = e.target.textContent;
+    (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(tag, select).addEventListener("click", e => closeTag(e));
+    allTags[select].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(tag));
     findRecipesByTags(mainResults);
   };
   /*A la fermeture d'un tag on supprime le tag de l'interface et du tableau des tags et on update les listes des selects */
@@ -2165,24 +2143,11 @@ const search = () => {
       const selectType = e.target.getAttribute("name");
       liveRefreshOptionsSelect(searchedTag, selectType);
     });
-    /*Ecouteurs pour validation du tag Enter key*/
-
-    tagInput.addEventListener("keydown", e => {
-      if (e.code === "Enter") {
-        onValidateTag(e, tagInput);
-      }
-    });
   });
   /*Selects updates */
 
   document.querySelectorAll(".combo-list li").forEach(li => {
-    li.addEventListener("click", li => {
-      const selectInput = document.getElementsByName(li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, ""))[0];
-      selectInput.value = li.target.textContent;
-      selectInput.dispatchEvent(new KeyboardEvent("keydown", {
-        code: "Enter"
-      }));
-    });
+    li.addEventListener("click", li => onValidateTag(li));
   });
 };
 

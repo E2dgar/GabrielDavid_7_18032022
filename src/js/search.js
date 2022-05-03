@@ -49,6 +49,8 @@ const search = () => {
       allTags.ustensiles.length > 0
     ) {
       return true;
+    } else {
+      return false;
     }
   };
 
@@ -156,7 +158,7 @@ const search = () => {
       });
       return liInSelect;
     };
-
+    console.log("tag", isTag());
     /*On met à jour les élements de liste du select concerné */
     switch (selectType) {
       case "ingredients":
@@ -237,29 +239,13 @@ const search = () => {
   };
 
   /*Déclenche la recherche par tag quand un tag est validé */
-  const onValidateTag = (e, input) => {
-    if (e.code === "Enter") {
-      e.preventDefault();
-      const select = input.getAttribute("name");
+  const onValidateTag = (e) => {
+    const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
+    const tag = e.target.textContent;
+    createTag(tag, select).addEventListener("click", (e) => closeTag(e));
 
-      createTag(input.value, select).addEventListener("click", (e) =>
-        closeTag(e)
-      );
+    allTags[select].push(textToClassNameFormat(tag));
 
-      /*Update de l'objet qui conteinet tous les tags de l'UI*/
-      allTags[input.getAttribute("name")].push(
-        textToClassNameFormat(input.value)
-      );
-
-      input.value = null;
-    }
-    if (!e.code) {
-      const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
-      const tag = e.target.textContent;
-      createTag(tag, select).addEventListener("click", (e) => closeTag(e));
-
-      allTags[select].push(textToClassNameFormat(tag));
-    }
     findRecipesByTags(mainResults);
   };
 
@@ -297,26 +283,12 @@ const search = () => {
       const selectType = e.target.getAttribute("name");
       liveRefreshOptionsSelect(searchedTag, selectType);
     });
-    /*Ecouteurs pour validation du tag Enter key*/
-    tagInput.addEventListener("keydown", (e) => {
-      if (e.code === "Enter") {
-        onValidateTag(e, tagInput);
-      }
-    });
   });
 
   /*Selects updates */
 
   document.querySelectorAll(".combo-list li").forEach((li) => {
-    li.addEventListener("click", (li) => {
-      const selectInput = document.getElementsByName(
-        li.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "")
-      )[0];
-      selectInput.value = li.target.textContent;
-      selectInput.dispatchEvent(
-        new KeyboardEvent("keydown", { code: "Enter" })
-      );
-    });
+    li.addEventListener("click", (li) => onValidateTag(li));
   });
 };
 

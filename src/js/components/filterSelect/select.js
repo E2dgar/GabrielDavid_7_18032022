@@ -1,7 +1,7 @@
 const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
-  const inputsCombo = document.querySelectorAll(".combo-lists input");
+  const selectsLi = document.querySelectorAll(".combo-list li");
 
   /**
    * Show the list of options
@@ -37,6 +37,7 @@ const select = () => {
    * Hide the list of options and trigger medias sort
    */
   const hiddenListActions = () => {
+    console.log("ici");
     document.querySelector(".show .combo-list").classList.add("hidden");
     document.querySelector(".show .list-wrapper").classList.add("hidden");
 
@@ -49,8 +50,8 @@ const select = () => {
   const hideList = (e) => {
     if (
       !document.querySelector(".show") ||
-      e.target.closest("div")?.classList.contains("combo-box") ||
-      e.target.closest("div")?.classList.contains("list-wrapper")
+      e.target.classList.contains("list-input") ||
+      e.target.classList.contains("list-button")
     ) {
       return;
     }
@@ -61,14 +62,6 @@ const select = () => {
   closeButtons.forEach((button) =>
     button.addEventListener("click", hiddenListActions)
   );
-
-  inputsCombo.forEach((input) => {
-    input.addEventListener("keydown", (e) => {
-      if (e.code === "Enter") {
-        hiddenListActions();
-      }
-    });
-  });
 };
 
 export default select;

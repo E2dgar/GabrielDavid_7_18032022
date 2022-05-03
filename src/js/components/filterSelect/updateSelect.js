@@ -60,11 +60,6 @@ const updateOneSelect = (select, options, isTagValidated) => {
       }
     }
   });
-  if (liCount === 0) {
-    document.querySelector(`[name=${select}]`).setAttribute("disabled", true);
-  } else {
-    document.querySelector(`[name=${select}]`).removeAttribute("disabled");
-  }
 };
 
 /*Objet retournant pour chaque select le tableau de ses éléments de liste*/
