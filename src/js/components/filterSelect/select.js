@@ -1,7 +1,6 @@
 const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
-  const selectsLi = document.querySelectorAll(".combo-list li");
 
   /**
    * Show the list of options
@@ -61,14 +60,6 @@ const select = () => {
   closeButtons.forEach((button) =>
     button.addEventListener("click", hiddenListActions)
   );
-
-  inputsCombo.forEach((input) => {
-    input.addEventListener("keydown", (e) => {
-      if (e.code === "Enter") {
-        hiddenListActions();
-      }
-    });
-  });
 };
 
 export default select;

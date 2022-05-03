@@ -1817,7 +1817,6 @@ __webpack_require__.r(__webpack_exports__);
 const select = () => {
   const buttons = document.querySelectorAll(".list-button");
   const closeButtons = document.querySelectorAll(".close");
-  const selectsLi = document.querySelectorAll(".combo-list li");
   /**
    * Show the list of options
    */
@@ -1861,13 +1860,6 @@ const select = () => {
 
   document.addEventListener("click", e => hideList(e));
   closeButtons.forEach(button => button.addEventListener("click", hiddenListActions));
-  inputsCombo.forEach(input => {
-    input.addEventListener("keydown", e => {
-      if (e.code === "Enter") {
-        hiddenListActions();
-      }
-    });
-  });
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (select);
