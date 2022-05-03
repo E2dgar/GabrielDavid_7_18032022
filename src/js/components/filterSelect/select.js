@@ -37,7 +37,6 @@ const select = () => {
    * Hide the list of options and trigger medias sort
    */
   const hiddenListActions = () => {
-    console.log("ici");
     document.querySelector(".show .combo-list").classList.add("hidden");
     document.querySelector(".show .list-wrapper").classList.add("hidden");
 

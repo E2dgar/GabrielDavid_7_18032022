@@ -87,5 +87,14 @@
     }
 
   }
+
+  .no-results {
+    margin: auto;
+    font-weight: bold;
+    padding: 1rem;
+    border-radius: 5px;
+    border: 1px solid $red;
+    grid-column: 1 / 4;
+  }
   
 }

@@ -1724,7 +1724,7 @@ const refreshUiRecipes = searchedRecipes => {
     } else {
       const noResults = document.createElement("p");
       noResults.className = "no-results";
-      noResults.textContent = "Aucune recette pour cette recherche";
+      noResults.textContent = 'Aucune recette ne correspond à votre critère...vous pouvez cherchez "tarte aux pommes", "poisson", etc.';
       document.querySelector(".recettes").append(noResults);
       return;
     }
@@ -1854,7 +1854,6 @@ const select = () => {
    */
 
   const hiddenListActions = () => {
-    console.log("ici");
     document.querySelector(".show .combo-list").classList.add("hidden");
     document.querySelector(".show .list-wrapper").classList.add("hidden");
     document.querySelector(".show .list-button").removeAttribute("aria-expanded");
@@ -2009,8 +2008,8 @@ const search = () => {
    */
 
   const liveRefreshOptionsSelect = (searchedTag, selectType) => {
-    /*Si il a une recherche princpale d'éffectuée on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
-    const currentResults = mainResults.length > 0 ? mainResults : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
+    /*Si il  y a une recherche d'effectuée (main ou tags) on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
+    const currentResults = resultsByTags.length > 0 ? resultsByTags : mainResults.length > 0 ? mainResults : _http__WEBPACK_IMPORTED_MODULE_1__.allRecipes;
     /*Init tableau de tous les éléments de liste qui match avec la recherche*/
 
     let liInSelect = [];
@@ -2041,9 +2040,8 @@ const search = () => {
       });
       return liInSelect;
     };
-
-    console.log("tag", isTag());
     /*On met à jour les élements de liste du select concerné */
+
 
     switch (selectType) {
       case "ingredients":
@@ -2107,6 +2105,7 @@ const search = () => {
 
   const onValidateTag = e => {
     const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
+    document.querySelector(`[name="${select}"]`).value = "";
     const tag = e.target.textContent;
     (0,_components_tag__WEBPACK_IMPORTED_MODULE_4__["default"])(tag, select).addEventListener("click", e => closeTag(e));
     allTags[select].push((0,_services__WEBPACK_IMPORTED_MODULE_2__.textToClassNameFormat)(tag));

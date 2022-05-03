@@ -129,8 +129,13 @@ const search = () => {
    * @param {string} selectType
    */
   const liveRefreshOptionsSelect = (searchedTag, selectType) => {
-    /*Si il a une recherche princpale d'éffectuée on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
-    const currentResults = mainResults.length > 0 ? mainResults : allRecipes;
+    /*Si il  y a une recherche d'effectuée (main ou tags) on utilise ces résultats comme base de recherche sinon on utilise toutes les recettes*/
+    const currentResults =
+      resultsByTags.length > 0
+        ? resultsByTags
+        : mainResults.length > 0
+        ? mainResults
+        : allRecipes;
     /*Init tableau de tous les éléments de liste qui match avec la recherche*/
     let liInSelect = [];
 
@@ -158,7 +163,7 @@ const search = () => {
       });
       return liInSelect;
     };
-    console.log("tag", isTag());
+
     /*On met à jour les élements de liste du select concerné */
     switch (selectType) {
       case "ingredients":
@@ -241,6 +246,7 @@ const search = () => {
   /*Déclenche la recherche par tag quand un tag est validé */
   const onValidateTag = (e) => {
     const select = e.target.getAttribute("id").replace(/-[0-9]?[0-9]/, "");
+    document.querySelector(`[name="${select}"]`).value = "";
     const tag = e.target.textContent;
     createTag(tag, select).addEventListener("click", (e) => closeTag(e));
 

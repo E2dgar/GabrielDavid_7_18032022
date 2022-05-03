@@ -21,7 +21,8 @@ const refreshUiRecipes = (searchedRecipes) => {
     } else {
       const noResults = document.createElement("p");
       noResults.className = "no-results";
-      noResults.textContent = "Aucune recette pour cette recherche";
+      noResults.textContent =
+        'Aucune recette ne correspond à votre critère...vous pouvez cherchez "tarte aux pommes", "poisson", etc.';
       document.querySelector(".recettes").append(noResults);
       return;
     }
